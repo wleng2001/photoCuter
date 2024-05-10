@@ -20,6 +20,7 @@ namespace photoCuter
     /// </summary>
     public partial class MainWindow : Window
     {
+        string[] files;
         public MainWindow()
         {
             InitializeComponent();
@@ -63,7 +64,15 @@ namespace photoCuter
             dialogForm.Title = "Choose photos";
             dialogForm.DefaultExt = ".png";
             dialogForm.Multiselect = true;
-            dialogForm.ShowDialog();
+            bool? result = dialogForm.ShowDialog();
+            if(result == true)
+            {
+                files = dialogForm.FileNames;
+                BitmapImage bI = new BitmapImage(new Uri(files[0]));
+                ImageBrush iB = new ImageBrush(bI);
+                iB.Stretch = Stretch.Uniform;
+                photoCanvas.Background = iB;
+            }
         }
     }
 }
