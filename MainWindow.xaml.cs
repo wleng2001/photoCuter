@@ -21,7 +21,6 @@ namespace photoCuter
     public partial class MainWindow : Window
     {
         string[] files;
-        Rectangle cutRectangle;
         BitmapImage bI;
         public MainWindow()
         {
@@ -94,7 +93,7 @@ namespace photoCuter
             double height;
             double x;
             double y;
-            photoCanvas.Children.Remove(cutRectangle);
+            cutRectangle.Visibility = Visibility.Hidden;
             if (bI.Width > bI.Height && windowWidth/windowHeight < bI.Width/bI.Height)
             {
                 width = windowWidth;
@@ -109,13 +108,11 @@ namespace photoCuter
                 width = (bI.Width*windowHeight)/bI.Height;
                 x =  (windowWidth - width) /2 ;
             }
-            cutRectangle = new Rectangle();
             cutRectangle.Width = width;
             cutRectangle.Height = height;
-            cutRectangle.Stroke = Brushes.Black;
-            photoCanvas.Children.Add(cutRectangle);
             Canvas.SetLeft(cutRectangle, x);
             Canvas.SetTop(cutRectangle, y);
+            cutRectangle.Visibility = Visibility.Visible;
         }
 
         private void photoCanvas_Loaded(object sender, RoutedEventArgs e)

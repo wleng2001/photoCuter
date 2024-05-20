@@ -13,8 +13,8 @@
                 <MenuItem Header="Open" Click="MenuItem_Click"></MenuItem>
             </MenuItem>
         </Menu>
-        <Border Margin="0,22,0,0" Width="275" HorizontalAlignment="Right" BorderBrush="Gray" BorderThickness="1">
-            <StackPanel x:Name="optionsStacPanel" Margin="0,0,10,0" Orientation="Vertical" HorizontalAlignment="Stretch" >
+        <Border Margin="0,22,10,10" Width="275" HorizontalAlignment="Right" BorderBrush="Gray" BorderThickness="1">
+            <StackPanel x:Name="optionsStacPanel" Margin="0" Orientation="Vertical" HorizontalAlignment="Stretch" >
                 <Label Name="brightntessLabel" Content="Brightntess" HorizontalAlignment="Left"/>
                 <Slider Name="brightnessSlider" Minimum="-10" Maximum="10" Value="0" ValueChanged="brightnessSlider_ValueChanged"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -43,7 +43,9 @@
                 <Button Name="confirmButton" Content="Confirm" Width="115"/>
             </StackPanel>
         </Border>
-        <Canvas x:Name="photoCanvas" Margin="10,27,290,10" Height="Auto" Width="Auto"/>
+        <Canvas x:Name="photoCanvas" Margin="10,27,290,10" Height="Auto" Width="Auto">
+            <Rectangle Name="cutRectangle" Visibility="Hidden" Stroke="Black" StrokeThickness="1"/>
+        </Canvas>
 
     </Grid>
 </Window>
