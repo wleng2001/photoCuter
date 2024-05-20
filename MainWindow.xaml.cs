@@ -21,7 +21,8 @@ namespace photoCuter
     public partial class MainWindow : Window
     {
         string[] files;
-        BitmapImage bI;
+        openedImageObject openedImageObject;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -78,9 +79,7 @@ namespace photoCuter
             if(result == true)
             {
                 files = dialogForm.FileNames;
-                bI = new BitmapImage(new Uri(files[0]));
-                ImageBrush iB = new ImageBrush(bI);
-                iB.Stretch = Stretch.Uniform;
+                ImageBrush iB = openedImageObject.putImage(new BitmapImage(new Uri(files[0])), photoCanvas.ActualWidth, photoCanvas.ActualHeight);
                 photoCanvas.Background = iB;
                 putCutRectangle(photoCanvas.ActualWidth, photoCanvas.ActualHeight);
 
@@ -89,29 +88,14 @@ namespace photoCuter
 
         void putCutRectangle(double windowWidth, double windowHeight)
         {
-            double width;
-            double height;
-            double x;
-            double y;
+
+            
             cutRectangle.Visibility = Visibility.Hidden;
-            if (bI.Width > bI.Height && windowWidth/windowHeight < bI.Width/bI.Height)
-            {
-                width = windowWidth;
-                x = 0;
-                height = (bI.Height*windowWidth)/bI.Width;
-                y = (windowHeight-height)/2;
-            }
-            else
-            {
-                height = windowHeight;
-                y = 0;
-                width = (bI.Width*windowHeight)/bI.Height;
-                x =  (windowWidth - width) /2 ;
-            }
-            cutRectangle.Width = width;
-            cutRectangle.Height = height;
-            Canvas.SetLeft(cutRectangle, x);
-            Canvas.SetTop(cutRectangle, y);
+            openedImageObject.updateImageSize(windowWidth, windowHeight);
+            cutRectangle.Width = openedImageObject.Width;
+            cutRectangle.Height = openedImageObject.Height;
+            Canvas.SetLeft(cutRectangle, openedImageObject.X);
+            Canvas.SetTop(cutRectangle, openedImageObject.Y);
             cutRectangle.Visibility = Visibility.Visible;
         }
 
@@ -121,10 +105,44 @@ namespace photoCuter
 
         private void Main_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if(bI != null)
+            if(openedImageObject != null)
             {
                 putCutRectangle(photoCanvas.ActualWidth, photoCanvas.ActualHeight);
             }
+        }
+        private void cutRectangle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private void cutRectangleThumbLeft_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        {
+
+        }
+
+        private void cutRectangleThumbLeft_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        {
+
+        }
+
+        private void cutRectangleThumbLeft_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+
+        }
+
+        private void cutRectangleThumbRight_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
+        {
+
+        }
+
+        private void cutRectangleThumbRight_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
+        {
+
+        }
+
+        private void cutRectangleThumbRight_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+
         }
     }
 }
