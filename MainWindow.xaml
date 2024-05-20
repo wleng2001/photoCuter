@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:photoCuter"
         mc:Ignorable="d"
-        Title="MainWindow" Height="579" Width="914" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" WindowState="Maximized">
+        Title="MainWindow" Height="579" Width="914" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" WindowState="Maximized" SizeChanged="Main_SizeChanged">
     <Grid>
         <Menu DockPanel.Dock ="Top" Height="22" VerticalAlignment="Top">
             <MenuItem Header="Files">
@@ -13,36 +13,37 @@
                 <MenuItem Header="Open" Click="MenuItem_Click"></MenuItem>
             </MenuItem>
         </Menu>
-        <StackPanel x:Name="optionsStacPanel" Margin="0,22,10,0" Orientation="Vertical" HorizontalAlignment="Right" Width="275">
-            <Label Name="brightntessLabel" Content="Brightntess" HorizontalAlignment="Left"/>
-            <Slider Name="brightnessSlider" Minimum="-10" Maximum="10" Value="0" ValueChanged="brightnessSlider_ValueChanged"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Label Name="settingBrightnessLabel" Content="Setting brightness: " HorizontalAlignment="Left"/>
-                <TextBox x:Name="settingBrightnessTextBox" Text="0" Width="61" HorizontalContentAlignment="Right" Height="18"/>
+        <Border Margin="0,22,0,0" Width="275" HorizontalAlignment="Right" BorderBrush="Gray" BorderThickness="1">
+            <StackPanel x:Name="optionsStacPanel" Margin="0,0,10,0" Orientation="Vertical" HorizontalAlignment="Stretch" >
+                <Label Name="brightntessLabel" Content="Brightntess" HorizontalAlignment="Left"/>
+                <Slider Name="brightnessSlider" Minimum="-10" Maximum="10" Value="0" ValueChanged="brightnessSlider_ValueChanged"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Label Name="settingBrightnessLabel" Content="Setting brightness: " HorizontalAlignment="Left"/>
+                    <TextBox x:Name="settingBrightnessTextBox" Text="0" Width="61" HorizontalContentAlignment="Right" Height="18" KeyDown="settinBrightnessTextBox_ClickEnter" />
+                </StackPanel>
+                <Label Name="contrastLabel" Content="Contrast" HorizontalAlignment="Left"/>
+                <Slider Name="contrastSlider" Minimum="-10" Maximum="10" Value="0" ValueChanged="contrastSlider_ValueChanged"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Label Name="settingContrastLabel" Content="Setting contrast: " HorizontalAlignment="Center"/>
+                    <TextBox Name="settingConstrastTextBox" Text="0" Width="65" HorizontalContentAlignment="Right" KeyDown="settingConstrastTextBox_ClickEnter" Height="19"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Label Name="cutPhotoLabel" Content="Cut photo" HorizontalContentAlignment="Left" Width="136"/>
+                    <CheckBox RenderTransformOrigin="0.5,0.5" Width="27" Height="15" Checked="CheckBox_Checked">
+                        <CheckBox.RenderTransform>
+                            <TransformGroup>
+                                <ScaleTransform ScaleX="-1"/>
+                                <SkewTransform/>
+                                <RotateTransform/>
+                                <TranslateTransform/>
+                            </TransformGroup>
+                        </CheckBox.RenderTransform>
+                    </CheckBox>
+                </StackPanel>
+                <Button Name="confirmButton" Content="Confirm" Width="115"/>
             </StackPanel>
-            <Label Name="contrastLabel" Content="Contrast" HorizontalAlignment="Left"/>
-            <Slider Name="contrastSlider" Minimum="-10" Maximum="10" Value="0" ValueChanged="contrastSlider_ValueChanged"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Label Name="settingContrastLabel" Content="Setting contrast: " HorizontalAlignment="Center"/>
-                <TextBox Name="settingConstrastTextBox" Text="0" Width="65" HorizontalContentAlignment="Right" KeyDown="settingConstrastTextBox_ClickEnter" Height="19"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Label Name="cutPhotoLabel" Content="Cut photo" HorizontalContentAlignment="Left" Width="136"/>
-                <CheckBox RenderTransformOrigin="0.5,0.5" Width="27" Height="15" Checked="CheckBox_Checked">
-                    <CheckBox.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="-1"/>
-                            <SkewTransform/>
-                            <RotateTransform/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </CheckBox.RenderTransform>
-                    <Canvas/>
-                </CheckBox>
-            </StackPanel>
-            <Button Name="confirmButton" Content="Confirm" Width="115"/>
-        </StackPanel>
-        <Canvas x:Name="photoCanvas" HorizontalAlignment="Left" Width="624" Margin="0,27,0,0"/>
+        </Border>
+        <Canvas x:Name="photoCanvas" Margin="10,27,290,10" Height="Auto" Width="Auto"/>
 
     </Grid>
 </Window>
