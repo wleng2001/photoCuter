@@ -8,9 +8,10 @@ using System.Windows.Media.Imaging;
 
 namespace photoCuter
 {
-    internal class openedImageObject
+    internal class OpenedImageObject
     {
-        BitmapImage openedImage {
+        BitmapImage openedImage;
+        BitmapImage OpenedImage {
             get 
             {
                 return openedImage;
@@ -47,7 +48,9 @@ namespace photoCuter
         {
             get { return y; }
         }
-        public float brightness
+
+        float brightness = 0;
+        public float Brightness
         {
             get
             {
@@ -59,12 +62,14 @@ namespace photoCuter
                     brightness = value;
             }
         }
-        public float contrast
+
+        float contrast = 0;
+        public float Contrast
         {
                    
             get
             {
-                    return brightness;
+                    return contrast;
             }
             set
             {
@@ -73,7 +78,7 @@ namespace photoCuter
             }
         }
 
-        openedImageObject()
+        public OpenedImageObject()
         {
             contrast = 0;
             brightness = 0;
@@ -84,14 +89,14 @@ namespace photoCuter
 
             updateImageSize(windowWidth, windowHeight);
 
-            ImageBrush imageBrush = new ImageBrush(image);
+            ImageBrush imageBrush = new ImageBrush(openedImage);
             imageBrush.Stretch = Stretch.Uniform;
             return imageBrush;
         }
 
         public void updateImageSize(double windowWidth, double windowHeight)
         {
-            if (openedImage.Width > openedImage.Height && windowWidth / windowHeight < openedImage.Width / bI.Height)
+            if (openedImage.Width > openedImage.Height && windowWidth / windowHeight < openedImage.Width / openedImage.Height)
             {
                 width = windowWidth;
                 x = 0;

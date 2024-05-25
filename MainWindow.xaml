@@ -41,13 +41,17 @@
                     </CheckBox>
                 </StackPanel>
                 <Button Name="confirmButton" Content="Confirm" Width="115"/>
+                <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0, 10, 0, 0"/>
+
             </StackPanel>
         </Border>
-        <Canvas x:Name="photoCanvas" Margin="5,27,290,5" Height="Auto" Width="Auto">
-            <Rectangle Name="cutRectangle" Visibility="Hidden" Stroke="Black" StrokeThickness="1" MouseLeftButtonDown="cutRectangle_MouseLeftButtonDown"/>
-            <Thumb Name="cutRectangleThumbLeft" Visibility="Hidden" Width="5" Height="5" DragDelta="cutRectangleThumbLeft_DragDelta" DragStarted="cutRectangleThumbLeft_DragStarted" DragCompleted="cutRectangleThumbLeft_DragCompleted"/>
-            <Thumb Name="cutRectangleThumbRight" Visibility="Hidden" Width="5" Height="5" DragDelta="cutRectangleThumbRight_DragDelta" DragStarted="cutRectangleThumbRight_DragStarted" DragCompleted="cutRectangleThumbRight_DragCompleted"/>
-        </Canvas>
+        <Border Margin="5,27,290,5" BorderBrush="Gray" BorderThickness="1">
+            <Canvas x:Name="photoCanvas" Margin="0" Height="Auto" Width="Auto">
+                <Rectangle Name="cutRectangle" Visibility="Hidden" Stroke="Black" StrokeThickness="1" MouseLeftButtonDown="cutRectangle_MouseLeftButtonDown"/>
+                <Thumb Name="cutRectangleThumbLeft" Visibility="Hidden" Width="8" Height="8" DragDelta="cutRectangleThumbLeft_DragDelta" DragStarted="cutRectangleThumbLeft_DragStarted" DragCompleted="cutRectangleThumbLeft_DragCompleted" Background="Gray"/>
+                <Thumb Name="cutRectangleThumbRight" Visibility="Hidden" Width="8" Height="8" DragDelta="cutRectangleThumbRight_DragDelta" DragStarted="cutRectangleThumbRight_DragStarted" DragCompleted="cutRectangleThumbRight_DragCompleted" Background="Gray"/>
+            </Canvas>
+        </Border>
 
     </Grid>
 </Window>
