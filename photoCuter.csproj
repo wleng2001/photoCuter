@@ -63,6 +63,9 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Brightness.cs" />
+    <Compile Include="CutRectangle.cs" />
+    <Compile Include="OperationOnImage.cs" />
     <Compile Include="OpenedImageObject.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>

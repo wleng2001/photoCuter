@@ -19,17 +19,44 @@ namespace photoCuter
     /// <summary>
     /// Logika interakcji dla klasy MainWindow.xaml
     /// </summary>
+    /// 
+    using OperationsOnImageList = List<OperationOnImage>;
     public partial class MainWindow : Window
     {
         string[] files;
         OpenedImageObject openedImageObject;
+        OperationsOnImageList[] operationsOnImages;
+        byte quantityOfOperationOnImage = 3;
+        CutRectangle cutRectangleWithCorner;
 
         public MainWindow()
         {
             InitializeComponent();
-            //openedImageObject = new OpenedImageObject();
         }
 
+        void restartParameters()
+        {
+            
+            if (openedImageObject != null)
+            {
+                //brightness
+                brightnessSlider.Value = 0;
+                settingBrightnessTextBox.Text = 0.ToString();
+                //contrast
+                contrastSlider.Value = 0;
+                settingConstrastTextBox.Text = 0.ToString();
+                //cutRectangle
+                /*
+                cutRectangle.Width = openedImageObject.Width;
+                cutRectangle.Height = openedImageObject.Height;
+                Canvas.SetLeft(cutRectangle, openedImageObject.X);
+                Canvas.SetTop(cutRectangle, openedImageObject.Y);
+                */
+                cutRectangleWithCorner.putRectangle();
+            }
+
+            
+        }
         private void brightnessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             settingBrightnessTextBox.Text = Math.Round(brightnessSlider.Value, 1).ToString();
@@ -81,10 +108,13 @@ namespace photoCuter
             if(result == true)
             {
                 files = dialogForm.FileNames;
+                operationsOnImages = new OperationsOnImageList[files.Length];
                 openedImageObject = new OpenedImageObject();
                 ImageBrush iB = openedImageObject.putImage(new BitmapImage(new Uri(files[0])), photoCanvas.ActualWidth, photoCanvas.ActualHeight);
                 photoCanvas.Background = iB;
-                putCutRectangle(photoCanvas.ActualWidth, photoCanvas.ActualHeight);
+                //putCutRectangle(photoCanvas.ActualWidth, photoCanvas.ActualHeight);
+                cutRectangleWithCorner = new CutRectangle(openedImageObject, photoCanvas, cutRectangle, cutRectangleThumbLeft, cutRectangleThumbRight);
+                cutRectangleWithCorner.putRectangle();
 
             }
         }
@@ -121,7 +151,8 @@ namespace photoCuter
         {
             if(openedImageObject != null)
             {
-                putCutRectangle(photoCanvas.ActualWidth, photoCanvas.ActualHeight);
+
+                cutRectangleWithCorner.updateRectangle();
             }
         }
         private void cutRectangle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -131,23 +162,7 @@ namespace photoCuter
 
         private void cutRectangleThumbLeft_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
-            double yadjust = Canvas.GetTop(cutRectangleThumbLeft) + e.VerticalChange;
-            double xadjust = Canvas.GetLeft(cutRectangleThumbLeft) + e.HorizontalChange;
-            if ((xadjust >= openedImageObject.X) &&  cutRectangle.Width - e.HorizontalChange>=0)
-            {
-                cutRectangle.Width = cutRectangle.Width - e.HorizontalChange;
-                Canvas.SetLeft(cutRectangle, xadjust);
-                Canvas.SetLeft(cutRectangleThumbLeft, xadjust);
-                
-
-            }
-
-            if((yadjust >= openedImageObject.Y) && cutRectangle.Height - e.VerticalChange >= 0)
-            {
-                cutRectangle.Height = cutRectangle.Height - e.VerticalChange;
-                Canvas.SetTop(cutRectangle, yadjust);
-                Canvas.SetTop(cutRectangleThumbLeft, yadjust);
-            }
+            cutRectangleWithCorner.SetLeftUpCorner(e.HorizontalChange, e.VerticalChange);
         }
 
         private void cutRectangleThumbLeft_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
@@ -162,21 +177,7 @@ namespace photoCuter
 
         private void cutRectangleThumbRight_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
-            double yadjust = Canvas.GetTop(cutRectangleThumbRight) + e.VerticalChange;
-            double xadjust = Canvas.GetLeft(cutRectangleThumbRight) + e.HorizontalChange;
-            if (cutRectangle.Width - e.HorizontalChange >= 0 && xadjust <= openedImageObject.X+openedImageObject.Width-cutRectangleThumbRight.Width && xadjust >= Canvas.GetLeft(cutRectangleThumbLeft))
-            {
-                cutRectangle.Width = cutRectangle.Width + e.HorizontalChange;
-                Canvas.SetLeft(cutRectangleThumbRight, xadjust);
-
-
-            }
-
-            if ((yadjust >= Canvas.GetTop(cutRectangleThumbLeft)) && cutRectangle.Height - e.VerticalChange >= 0 && yadjust <= openedImageObject.Y+openedImageObject.Height-cutRectangleThumbRight.Height)
-            {
-                cutRectangle.Height = cutRectangle.Height + e.VerticalChange;
-                Canvas.SetTop(cutRectangleThumbRight, yadjust);
-            }
+            cutRectangleWithCorner.SetRightDownCorner(e.HorizontalChange, e.VerticalChange);
         }
 
         private void cutRectangleThumbRight_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
@@ -187,6 +188,11 @@ namespace photoCuter
         private void cutRectangleThumbRight_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
             cutRectangleThumbRight.Background = Brushes.Gray;
+        }
+
+        private void confirmButton_Click(object sender, RoutedEventArgs e)
+        {
+            restartParameters();
         }
     }
 }

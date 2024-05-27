@@ -5,12 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:photoCuter"
         mc:Ignorable="d"
-        Title="MainWindow" Height="579" Width="914" ResizeMode="CanMinimize" WindowStartupLocation="CenterScreen" WindowState="Maximized" SizeChanged="Main_SizeChanged">
+        Title="MainWindow" Height="579" Width="914" ResizeMode="CanResize" WindowStartupLocation="CenterScreen" WindowState="Maximized" SizeChanged="Main_SizeChanged">
     <Grid>
         <Menu DockPanel.Dock ="Top" Height="22" VerticalAlignment="Top">
-            <MenuItem Header="Files">
-                <MenuItem Header="Save"></MenuItem>
-                <MenuItem Header="Open" Click="MenuItem_Click"></MenuItem>
+            <MenuItem Header="_Files">
+                <MenuItem Header="_Save"></MenuItem>
+                <MenuItem Header="_Open" Click="MenuItem_Click"></MenuItem>
             </MenuItem>
         </Menu>
         <Border Margin="0,27,5,5" Width="275" HorizontalAlignment="Right" BorderBrush="Gray" BorderThickness="1">
@@ -40,7 +40,7 @@
                         </CheckBox.RenderTransform>
                     </CheckBox>
                 </StackPanel>
-                <Button Name="confirmButton" Content="Confirm" Width="115"/>
+                <Button Name="confirmButton" Content="Confirm" Width="115" Click="confirmButton_Click"/>
                 <ListBox d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0, 10, 0, 0"/>
 
             </StackPanel>
