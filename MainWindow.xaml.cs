@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,8 @@ using System.Windows.Shapes;
 
 namespace photoCuter
 {
+    using Brushes = System.Windows.Media.Brushes;
+
     /// <summary>
     /// Logika interakcji dla klasy MainWindow.xaml
     /// </summary>
@@ -26,8 +29,9 @@ namespace photoCuter
         string[] files;
         OpenedImageObject openedImageObject;
         OperationsOnImageList[] operationsOnImages;
+        OperationsOnImageList tempOperationsList;
         byte quantityOfOperationOnImage = 3;
-        CutRectangle cutRectangleWithCorner;
+        CutRectangle CutRectangleWithCorner;
 
         public MainWindow()
         {
@@ -46,13 +50,7 @@ namespace photoCuter
                 contrastSlider.Value = 0;
                 settingConstrastTextBox.Text = 0.ToString();
                 //cutRectangle
-                /*
-                cutRectangle.Width = openedImageObject.Width;
-                cutRectangle.Height = openedImageObject.Height;
-                Canvas.SetLeft(cutRectangle, openedImageObject.X);
-                Canvas.SetTop(cutRectangle, openedImageObject.Y);
-                */
-                cutRectangleWithCorner.putRectangle();
+                CutRectangleWithCorner.putRectangle();
             }
 
             
@@ -112,35 +110,11 @@ namespace photoCuter
                 openedImageObject = new OpenedImageObject();
                 ImageBrush iB = openedImageObject.putImage(new BitmapImage(new Uri(files[0])), photoCanvas.ActualWidth, photoCanvas.ActualHeight);
                 photoCanvas.Background = iB;
-                //putCutRectangle(photoCanvas.ActualWidth, photoCanvas.ActualHeight);
-                cutRectangleWithCorner = new CutRectangle(openedImageObject, photoCanvas, cutRectangle, cutRectangleThumbLeft, cutRectangleThumbRight);
-                cutRectangleWithCorner.putRectangle();
+                CutRectangleWithCorner = new CutRectangle(openedImageObject, photoCanvas, cutRectangle, cutRectangleThumbLeft, cutRectangleThumbRight);
+                CutRectangleWithCorner.putRectangle();
+                tempOperationsList = new OperationsOnImageList(3);
 
             }
-        }
-
-        void putCutRectangle(double windowWidth, double windowHeight)
-        {
-
-            
-            cutRectangle.Visibility = Visibility.Hidden;
-            cutRectangleThumbLeft.Visibility = Visibility.Hidden;
-            cutRectangleThumbRight.Visibility = Visibility.Hidden;
-
-            openedImageObject.updateImageSize(windowWidth, windowHeight);
-            cutRectangle.Width = openedImageObject.Width;
-            cutRectangle.Height = openedImageObject.Height;
-            Canvas.SetLeft(cutRectangle, openedImageObject.X);
-            Canvas.SetTop(cutRectangle, openedImageObject.Y);
-
-            Canvas.SetLeft(cutRectangleThumbLeft, openedImageObject.X);
-            Canvas.SetTop(cutRectangleThumbLeft, openedImageObject.Y);
-            Canvas.SetLeft(cutRectangleThumbRight, openedImageObject.X+openedImageObject.Width - cutRectangleThumbRight.Width);
-            Canvas.SetTop(cutRectangleThumbRight, openedImageObject.Y+openedImageObject.Height - cutRectangleThumbRight.Height);
-
-            cutRectangle.Visibility = Visibility.Visible;
-            cutRectangleThumbLeft.Visibility = Visibility.Visible;
-            cutRectangleThumbRight.Visibility = Visibility.Visible;
         }
 
         private void photoCanvas_Loaded(object sender, RoutedEventArgs e)
@@ -152,7 +126,7 @@ namespace photoCuter
             if(openedImageObject != null)
             {
 
-                cutRectangleWithCorner.updateRectangle();
+                CutRectangleWithCorner.updateRectangle();
             }
         }
         private void cutRectangle_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -162,7 +136,7 @@ namespace photoCuter
 
         private void cutRectangleThumbLeft_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
-            cutRectangleWithCorner.SetLeftUpCorner(e.HorizontalChange, e.VerticalChange);
+            CutRectangleWithCorner.SetLeftUpCorner(e.HorizontalChange, e.VerticalChange);
         }
 
         private void cutRectangleThumbLeft_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
@@ -177,7 +151,7 @@ namespace photoCuter
 
         private void cutRectangleThumbRight_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e)
         {
-            cutRectangleWithCorner.SetRightDownCorner(e.HorizontalChange, e.VerticalChange);
+            CutRectangleWithCorner.SetRightDownCorner(e.HorizontalChange, e.VerticalChange);
         }
 
         private void cutRectangleThumbRight_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
@@ -192,7 +166,32 @@ namespace photoCuter
 
         private void confirmButton_Click(object sender, RoutedEventArgs e)
         {
-            restartParameters();
+            if ((bool)cutPhotCheckBox.IsChecked)
+            {
+                OperationOnImage cutImage = new OperationOnImage();
+                cutImage.OperationType = OperationOnImage.CutImage;
+                cutImage.X = CutRectangleWithCorner.XWithoutScale;
+                cutImage.Y = CutRectangleWithCorner.YWithoutScale;
+                cutImage.Width = CutRectangleWithCorner.WidthWithoutScale;
+                cutImage.Height = CutRectangleWithCorner.HeightWithoutScale;
+                tempOperationsList.Add(cutImage);
+                CutRectangleWithCorner.CutImage();
+            }
+             restartParameters();
+        }
+
+        void saveFiles(String dir)
+        {
+
+        }
+
+        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.SaveFileDialog();
+            dialog.FileName = "Folder"; // Default file name
+
+            // Show save file dialog box
+            bool? result = dialog.ShowDialog();
         }
     }
 }

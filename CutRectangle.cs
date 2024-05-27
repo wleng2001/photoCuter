@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Security.Policy;
 using System.Text;
@@ -7,7 +8,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Rectangle = System.Windows.Shapes.Rectangle;
 
 namespace photoCuter
 {
@@ -26,6 +30,15 @@ namespace photoCuter
                     Canvas.SetLeft(LeftUpThumb, x);
                     Canvas.SetLeft(RightDownThumb, x+Width-RightDownThumb.Width);
                 }
+            }
+        }
+        public int XWithoutScale
+        {
+            get
+            {
+                int w = openedImageObject.WidthWithoutScale;
+                int tempX = (int)((X * w) / openedImageObject.Width);
+                return tempX;
             }
         }
 
@@ -60,6 +73,16 @@ namespace photoCuter
             }
         }
 
+        public int YWithoutScale
+        {
+            get
+            {
+                int h = openedImageObject.HeightWithoutScale;
+                int tempY = (int)((Y * h) / openedImageObject.Height);
+                return tempY;
+            }
+        }
+
         private double minY;
         public double MinY
         {
@@ -89,6 +112,16 @@ namespace photoCuter
             }
         }
 
+        public int WidthWithoutScale
+        {
+            get
+            {
+                int w = openedImageObject.WidthWithoutScale;
+                int tempWidth = (int)((Width * w) / openedImageObject.Width);
+                return tempWidth;
+            }
+        }
+
         private double height;
         public double Height
         {
@@ -101,6 +134,16 @@ namespace photoCuter
                     height = value;
                     Canvas.SetTop(RightDownThumb, y+height- RightDownThumb.Height);
                 }
+            }
+        }
+
+        public int HeightWithoutScale
+        {
+            get
+            {
+                int h = openedImageObject.HeightWithoutScale;
+                int tempWidth = (int)((Height * h) / openedImageObject.Height);
+                return tempWidth;
             }
         }
         public Canvas Canva;
@@ -202,16 +245,16 @@ namespace photoCuter
 
         public void SetRightDownCorner(double XChange, double YChange) 
         {
-            double y = Y + YChange;
-            double x = X + XChange;
-            if (x>0 && x<=MaxX-minX && Width+XChange>0)
+            double yc = Y + Height + YChange;
+            double xc = X + Width  + XChange;
+            if (xc>0 && xc<=MaxX-minX && Width+XChange>0)
             {
                 Width = Width + XChange;
 
 
             }
 
-            if (y>0 && y<= MaxY-minY && Height + YChange > 0)
+            if (yc>0 && yc<= MaxY-minY && Height + YChange > 0)
             {
                 Height = Height + YChange;
             }
@@ -225,5 +268,42 @@ namespace photoCuter
             MaxX = openedImageObject.Width + openedImageObject.X;
             MaxY = openedImageObject.Height + openedImageObject.Y;
         }
+
+        public void CutImage()
+        {
+            Bitmap oldImage = OpenedImageObject.convertToBitmap(openedImageObject.OpenedImage);
+            int w = oldImage.Width;
+            int h = oldImage.Height;
+            int tempX = (int)((X * w) / openedImageObject.Width);
+            int tempY = (int)((Y * h) / openedImageObject.Height);
+            int tempWidth = (int)((Width * w) / openedImageObject.Width);
+            int tempHeight = (int)((Height * h) / openedImageObject.Height);
+
+            Bitmap newImage = CutImage(oldImage, tempX, tempY, tempWidth, tempHeight);
+            
+            Canva.Background = openedImageObject.putImage(OpenedImageObject.convertToBitmapImage(newImage), Canva.ActualWidth, Canva.ActualHeight);
+            updateOpenedImage();
+            
+        }
+
+        static public Bitmap CutImage(Bitmap image, int tempX, int tempY, int tempWidth, int tempHeight)
+        {
+            Bitmap newImage = new Bitmap(tempWidth, tempHeight);
+
+            for (int i = 0; i < tempWidth; i++)
+            {
+                for (int j = 0; j < tempHeight; j++)
+                {
+                    if(image.Width<tempX+i || image.Height < tempY + j)
+                    {
+                        continue;
+                    }
+                    Color pxl = image.GetPixel(tempX + i, (tempY + j));
+                    newImage.SetPixel(i, j, pxl);
+                }
+            }
+            return newImage;
+        }
+        
     }
 }

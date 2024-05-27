@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Interop;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Drawing.Imaging;
 
 namespace photoCuter
 {
     internal class OpenedImageObject
     {
         BitmapImage openedImage;
-        BitmapImage OpenedImage {
+        public BitmapImage OpenedImage {
             get 
             {
                 return openedImage;
@@ -29,6 +34,7 @@ namespace photoCuter
                 return width;
             }
         }
+        public int WidthWithoutScale;
         double height;
 
         public double Height
@@ -38,6 +44,8 @@ namespace photoCuter
                 return height;
             }
         }
+
+        public int HeightWithoutScale;
         double x;
         public double X
         {
@@ -86,6 +94,9 @@ namespace photoCuter
         public ImageBrush putImage(BitmapImage image, double windowWidth, double windowHeight)
         {
             openedImage = image;
+            Bitmap tempImage = OpenedImageObject.convertToBitmap(openedImage);
+            WidthWithoutScale = tempImage.Width;
+            HeightWithoutScale = tempImage.Height;
 
             updateImageSize(windowWidth, windowHeight);
 
@@ -109,6 +120,37 @@ namespace photoCuter
                 y = 0;
                 width = (openedImage.Width * windowHeight) / openedImage.Height;
                 x = (windowWidth - width) / 2;
+            }
+        }
+
+        static public Bitmap convertToBitmap(BitmapImage Image)
+        {
+            using (MemoryStream outStream = new MemoryStream())
+            {
+                BitmapEncoder enc = new BmpBitmapEncoder();
+                enc.Frames.Add(BitmapFrame.Create(Image));
+                enc.Save(outStream);
+                System.Drawing.Bitmap bitmap = new System.Drawing.Bitmap(outStream);
+
+                return new Bitmap(bitmap);
+            }
+        }
+
+        static public BitmapImage convertToBitmapImage(Bitmap bitmap)
+        {
+            using (var memory = new MemoryStream())
+            {
+                bitmap.Save(memory, ImageFormat.Png);
+                memory.Position = 0;
+
+                var bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = memory;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+                bitmapImage.Freeze();
+
+                return bitmapImage;
             }
         }
     }
