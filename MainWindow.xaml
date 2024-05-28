@@ -18,7 +18,7 @@
         <Border Margin="0,27,5,5" Width="275" HorizontalAlignment="Right" BorderBrush="Gray" BorderThickness="1">
             <StackPanel x:Name="optionsStacPanel" Margin="0" Orientation="Vertical" HorizontalAlignment="Stretch" >
                 <Label Name="brightntessLabel" Content="Brightntess" HorizontalAlignment="Left"/>
-                <Slider Name="brightnessSlider" Minimum="-10" Maximum="10" Value="0" ValueChanged="brightnessSlider_ValueChanged"/>
+                <Slider Name="brightnessSlider" Minimum="-10" Maximum="10" Value="0" ValueChanged="brightnessSlider_ValueChanged" ManipulationCompleted="brightnessSlider_ManipulationCompleted"/>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Label Name="settingBrightnessLabel" Content="Setting brightness: " HorizontalAlignment="Left"/>
                     <TextBox x:Name="settingBrightnessTextBox" Text="0" Width="61" HorizontalContentAlignment="Right" Height="18" KeyDown="settinBrightnessTextBox_ClickEnter" />

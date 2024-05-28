@@ -32,6 +32,7 @@ namespace photoCuter
         OperationsOnImageList tempOperationsList;
         byte quantityOfOperationOnImage = 3;
         CutRectangle CutRectangleWithCorner;
+        Brightness brightness = new Brightness(10);
 
         public MainWindow()
         {
@@ -88,7 +89,11 @@ namespace photoCuter
         private void settinBrightnessTextBox_ClickEnter(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
+            {
                 setSliderWithTextBox(-10, 10, settingBrightnessTextBox, brightnessSlider);
+                photoCanvas.Background = openedImageObject.putImage(OpenedImageObject.convertToBitmapImage(brightness.SetBrightness(OpenedImageObject.convertToBitmap(openedImageObject.OpenedImage), (float)brightnessSlider.Value)), photoCanvas.ActualWidth, photoCanvas.ActualHeight);
+            }
+                
         }
         private void CheckBox_Checked(object sender, RoutedEventArgs e)
         {
@@ -192,6 +197,12 @@ namespace photoCuter
 
             // Show save file dialog box
             bool? result = dialog.ShowDialog();
+        }
+
+        private void brightnessSlider_ManipulationCompleted(object sender, ManipulationCompletedEventArgs e)
+        {
+            openedImageObject.putImage(OpenedImageObject.convertToBitmapImage(brightness.SetBrightness(OpenedImageObject.convertToBitmap(openedImageObject.OpenedImage), (float)brightnessSlider.Value)), photoCanvas.ActualWidth, photoCanvas.ActualHeight);
+            MessageBox.Show(brightnessSlider.Value.ToString());
         }
     }
 }
