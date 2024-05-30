@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -281,11 +283,30 @@ namespace photoCuter
 
         private void MenuItem_Click_1(object sender, RoutedEventArgs e)
         {
-            var dialog = new Microsoft.Win32.SaveFileDialog();
-            dialog.FileName = "Folder"; // Default file name
+            if (files != null)
+            {
+                var dialog = new Microsoft.Win32.SaveFileDialog();
+                dialog.FileName = "Folder"; // Default file name
 
-            // Show save file dialog box
-            bool? result = dialog.ShowDialog();
+                // Show save file dialog box
+                bool? result = dialog.ShowDialog();
+                Directory.CreateDirectory(dialog.FileName);
+                
+                for(int i = 0; i< files.Length; i++)
+                {
+                    Bitmap b = new Bitmap(files[i]);
+                    String[] fileSplit = files[i].Split('\\');
+                    String fileName = fileSplit[fileSplit.Length - 1];
+                    String path = dialog.FileName + "\\" + fileName;
+                    MessageBox.Show(path);
+
+                    foreach (var o in operationsOnImages[i])
+                    {
+                        b = OperationOnImage.MakeOperation(b, o);
+                    }
+                    b.Save(path, ImageFormat.Png);
+                }
+            }
             
         }
 
