@@ -4,8 +4,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
-namespace photoCuter
+namespace tools
 {
     internal class OperationOnImage
     {
@@ -26,11 +27,13 @@ namespace photoCuter
             switch (operation.OperationType)
             {
                 case "Brightness":
+                    newImage = tools.Brightness.SetBrightness(image, (float)operation.Value, 10);
                     break;
                 case "Contrast":
+                    newImage = tools.Contrast.setContrast(image, (float)operation.Value);
                     break;
                 case "CutImage":
-                    newImage = CutRectangle.CutImage(image, operation.X, operation.Y, operation.Width, operation.Height);
+                    newImage = photoCuter.CutRectangle.CutImage(image, operation.X, operation.Y, operation.Width, operation.Height);
                     break;
             }
             return newImage;

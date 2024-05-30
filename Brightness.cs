@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace photoCuter
+namespace tools
 {
     internal class Brightness
     {
@@ -30,7 +30,7 @@ namespace photoCuter
             this.multiplier = multiplier;
         }
 
-        private byte addNumber(int a, int b)
+        static private byte addNumber(int a, int b)
         {
             int c = a + b;
             if (c > 255)
@@ -39,7 +39,7 @@ namespace photoCuter
             }
             return (byte)c;
         }
-        public Bitmap SetBrightness(Bitmap image, float bright)
+        static public Bitmap SetBrightness(Bitmap image, float bright,int multiplier)
         {
             Bitmap newImage = new Bitmap(image.Width, image.Height);
             for(int i = 0; i < image.Width; i++)

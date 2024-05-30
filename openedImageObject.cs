@@ -26,6 +26,7 @@ namespace photoCuter
                 openedImage = value;
             } 
         }
+        public Bitmap OpenedBitmap;
         double width;
         public double Width
         {
@@ -57,43 +58,13 @@ namespace photoCuter
             get { return y; }
         }
 
-        float brightness = 0;
-        public float Brightness
-        {
-            get
-            {
-                return brightness;
-            }
-            set
-            {
-                if(value<=10 && value>=-10)
-                    brightness = value;
-            }
-        }
-
-        float contrast = 0;
-        public float Contrast
-        {
-                   
-            get
-            {
-                    return contrast;
-            }
-            set
-            {
-                if (value <= 10 && value >= -10)
-                    contrast = value;
-            }
-        }
-
         public OpenedImageObject()
         {
-            contrast = 0;
-            brightness = 0;
         }
         public ImageBrush putImage(BitmapImage image, double windowWidth, double windowHeight)
         {
             openedImage = image;
+            OpenedBitmap = OpenedImageObject.convertToBitmap(image);
             Bitmap tempImage = OpenedImageObject.convertToBitmap(openedImage);
             WidthWithoutScale = tempImage.Width;
             HeightWithoutScale = tempImage.Height;
@@ -103,6 +74,13 @@ namespace photoCuter
             ImageBrush imageBrush = new ImageBrush(openedImage);
             imageBrush.Stretch = Stretch.Uniform;
             return imageBrush;
+        }
+
+        static public ImageBrush convertToBrush(BitmapImage image)
+        {
+            ImageBrush brush = new ImageBrush(image);
+            brush.Stretch = Stretch.Uniform;
+            return brush;
         }
 
         public void updateImageSize(double windowWidth, double windowHeight)
@@ -121,6 +99,16 @@ namespace photoCuter
                 width = (openedImage.Width * windowHeight) / openedImage.Height;
                 x = (windowWidth - width) / 2;
             }
+        }
+
+        public void updateImageSource(Bitmap bitmap) //don't use if you change dimensions of photo!
+        {
+            if(bitmap.Width == WidthWithoutScale && bitmap.Height == HeightWithoutScale)
+            {
+                openedImage = convertToBitmapImage(bitmap);
+                OpenedBitmap = bitmap;
+            }
+
         }
 
         static public Bitmap convertToBitmap(BitmapImage Image)

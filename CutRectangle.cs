@@ -294,7 +294,7 @@ namespace photoCuter
             {
                 for (int j = 0; j < tempHeight; j++)
                 {
-                    if(image.Width<tempX+i || image.Height < tempY + j)
+                    if(image.Width<tempX+i-1 || image.Height < tempY + j-1)
                     {
                         continue;
                     }

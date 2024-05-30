@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using tools;
 
 namespace photoCuter
 {
@@ -23,7 +25,7 @@ namespace photoCuter
     /// Logika interakcji dla klasy MainWindow.xaml
     /// </summary>
     /// 
-    using OperationsOnImageList = List<OperationOnImage>;
+    using OperationsOnImageList = List<tools.OperationOnImage>;
     public partial class MainWindow : Window
     {
         string[] files;
@@ -32,7 +34,6 @@ namespace photoCuter
         OperationsOnImageList tempOperationsList;
         byte quantityOfOperationOnImage = 3;
         CutRectangle CutRectangleWithCorner;
-        Brightness brightness = new Brightness(10);
 
         public MainWindow()
         {
@@ -77,21 +78,86 @@ namespace photoCuter
             else
                 MessageBox.Show("Wrong format");
         }
+
+        private Bitmap setContrast(float cont, Bitmap bitmap)
+        {
+            if (cont == 0)
+            {
+                cont = 1;
+                return bitmap;
+            }
+            else
+            {
+                if (cont < 0)
+                {
+                    cont = 1.0f + cont * 0.1f;
+                }
+                else
+                {
+                    cont = cont + 1;
+                }
+            }
+            if (tempOperationsList.Count >= quantityOfOperationOnImage - 1)
+            {
+                tempOperationsList.Clear();
+            }
+            tempOperationsList.Add(
+                new tools.OperationOnImage()
+                {
+                    OperationType = tools.OperationOnImage.Contrast,
+                    Value = cont
+                });
+            return tools.Contrast.setContrast(bitmap, cont);
+
+        }
         private void settingConstrastTextBox_ClickEnter(object sender, KeyEventArgs e)
         {
             if(e.Key == Key.Enter)
             {
                 setSliderWithTextBox(-10, 10, settingConstrastTextBox, contrastSlider);
+                if(openedImageObject != null)
+                {
+                    Bitmap bitmap = setBrightness((float)brightnessSlider.Value, openedImageObject.OpenedBitmap);
+                    photoCanvas.Background = OpenedImageObject.convertToBrush(OpenedImageObject.convertToBitmapImage(setContrast((float)contrastSlider.Value, bitmap)));
+                }
             }
 
         }
 
+       private Bitmap setBrightness(float bright, Bitmap bitmap)
+        {
+            Bitmap image;
+            if (bright != 0)
+            {
+                image = tools.Brightness.SetBrightness(bitmap, bright, 10);
+            }
+            else
+            {
+                image = bitmap;
+            }
+            if (tempOperationsList.Count >= quantityOfOperationOnImage - 1)
+            {
+                tempOperationsList.Clear();
+            }
+            tempOperationsList.Add(
+                new tools.OperationOnImage()
+                {
+                    OperationType = tools.OperationOnImage.Brightness,
+                    Value = bright
+                });
+            return image;
+        }
         private void settinBrightnessTextBox_ClickEnter(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
                 setSliderWithTextBox(-10, 10, settingBrightnessTextBox, brightnessSlider);
-                photoCanvas.Background = openedImageObject.putImage(OpenedImageObject.convertToBitmapImage(brightness.SetBrightness(OpenedImageObject.convertToBitmap(openedImageObject.OpenedImage), (float)brightnessSlider.Value)), photoCanvas.ActualWidth, photoCanvas.ActualHeight);
+                if (openedImageObject != null)
+                {
+                    Bitmap bitmap = setContrast((float)contrastSlider.Value, openedImageObject.OpenedBitmap);
+                    photoCanvas.Background = OpenedImageObject.convertToBrush(OpenedImageObject.convertToBitmapImage(setBrightness((float)brightnessSlider.Value, bitmap)));
+                }
+                
             }
                 
         }
@@ -112,6 +178,10 @@ namespace photoCuter
             {
                 files = dialogForm.FileNames;
                 operationsOnImages = new OperationsOnImageList[files.Length];
+                for(int i = 0; i< files.Length; i++)
+                {
+                    operationsOnImages[i] = new OperationsOnImageList();
+                }
                 openedImageObject = new OpenedImageObject();
                 ImageBrush iB = openedImageObject.putImage(new BitmapImage(new Uri(files[0])), photoCanvas.ActualWidth, photoCanvas.ActualHeight);
                 photoCanvas.Background = iB;
@@ -171,18 +241,37 @@ namespace photoCuter
 
         private void confirmButton_Click(object sender, RoutedEventArgs e)
         {
+            openedImageObject.updateImageSize(photoCanvas.ActualWidth, photoCanvas.ActualHeight);
+            Bitmap bitmap = openedImageObject.OpenedBitmap;
+
             if ((bool)cutPhotCheckBox.IsChecked)
             {
-                OperationOnImage cutImage = new OperationOnImage();
-                cutImage.OperationType = OperationOnImage.CutImage;
+                tools.OperationOnImage cutImage = new tools.OperationOnImage();
+                cutImage.OperationType = tools.OperationOnImage.CutImage;
                 cutImage.X = CutRectangleWithCorner.XWithoutScale;
                 cutImage.Y = CutRectangleWithCorner.YWithoutScale;
                 cutImage.Width = CutRectangleWithCorner.WidthWithoutScale;
                 cutImage.Height = CutRectangleWithCorner.HeightWithoutScale;
                 tempOperationsList.Add(cutImage);
-                CutRectangleWithCorner.CutImage();
+                openedImageObject.updateImageSource(bitmap);
             }
-             restartParameters();
+            if (tempOperationsList.Count > 0)
+            {
+                foreach (var t in tempOperationsList)
+                {
+                    bitmap = tools.OperationOnImage.MakeOperation(bitmap, t);
+                }
+                photoCanvas.Background = openedImageObject.putImage(OpenedImageObject.convertToBitmapImage(bitmap), photoCanvas.ActualWidth, photoCanvas.ActualHeight);
+                for (int i = 0; i < operationsOnImages.Length; i++)
+                {
+                    for (int j = 0; j < tempOperationsList.Count; j++)
+                    {
+                        operationsOnImages[i].Add(tempOperationsList[j]);
+                    }
+                }
+                tempOperationsList.Clear();
+            }
+            restartParameters();
         }
 
         void saveFiles(String dir)
@@ -197,12 +286,11 @@ namespace photoCuter
 
             // Show save file dialog box
             bool? result = dialog.ShowDialog();
+            
         }
 
         private void brightnessSlider_ManipulationCompleted(object sender, ManipulationCompletedEventArgs e)
         {
-            openedImageObject.putImage(OpenedImageObject.convertToBitmapImage(brightness.SetBrightness(OpenedImageObject.convertToBitmap(openedImageObject.OpenedImage), (float)brightnessSlider.Value)), photoCanvas.ActualWidth, photoCanvas.ActualHeight);
-            MessageBox.Show(brightnessSlider.Value.ToString());
         }
     }
 }
