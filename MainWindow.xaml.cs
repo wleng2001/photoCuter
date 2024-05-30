@@ -37,6 +37,8 @@ namespace photoCuter
         byte quantityOfOperationOnImage = 3;
         CutRectangle CutRectangleWithCorner;
 
+        Bitmap tempBitmap;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -120,7 +122,9 @@ namespace photoCuter
                 if(openedImageObject != null)
                 {
                     Bitmap bitmap = setBrightness((float)brightnessSlider.Value, openedImageObject.OpenedBitmap);
-                    photoCanvas.Background = OpenedImageObject.convertToBrush(OpenedImageObject.convertToBitmapImage(setContrast((float)contrastSlider.Value, bitmap)));
+                    bitmap = setContrast((float)contrastSlider.Value, bitmap);
+                    tempBitmap = bitmap;
+                    photoCanvas.Background = OpenedImageObject.convertToBrush(OpenedImageObject.convertToBitmapImage(bitmap));
                 }
             }
 
@@ -157,7 +161,9 @@ namespace photoCuter
                 if (openedImageObject != null)
                 {
                     Bitmap bitmap = setContrast((float)contrastSlider.Value, openedImageObject.OpenedBitmap);
-                    photoCanvas.Background = OpenedImageObject.convertToBrush(OpenedImageObject.convertToBitmapImage(setBrightness((float)brightnessSlider.Value, bitmap)));
+                    bitmap = setBrightness((float)brightnessSlider.Value, bitmap);
+                    tempBitmap = bitmap;
+                    photoCanvas.Background = OpenedImageObject.convertToBrush(OpenedImageObject.convertToBitmapImage(bitmap));
                 }
                 
             }
@@ -190,6 +196,7 @@ namespace photoCuter
                 CutRectangleWithCorner = new CutRectangle(openedImageObject, photoCanvas, cutRectangle, cutRectangleThumbLeft, cutRectangleThumbRight);
                 CutRectangleWithCorner.putRectangle();
                 tempOperationsList = new OperationsOnImageList(3);
+                tempBitmap = openedImageObject.OpenedBitmap;
 
             }
         }
@@ -244,7 +251,7 @@ namespace photoCuter
         private void confirmButton_Click(object sender, RoutedEventArgs e)
         {
             openedImageObject.updateImageSize(photoCanvas.ActualWidth, photoCanvas.ActualHeight);
-            Bitmap bitmap = openedImageObject.OpenedBitmap;
+            Bitmap bitmap = tempBitmap;
 
             if ((bool)cutPhotCheckBox.IsChecked)
             {
@@ -256,23 +263,17 @@ namespace photoCuter
                 cutImage.Height = CutRectangleWithCorner.HeightWithoutScale;
                 tempOperationsList.Add(cutImage);
                 openedImageObject.updateImageSource(bitmap);
-            }
-            if (tempOperationsList.Count > 0)
-            {
-                foreach (var t in tempOperationsList)
-                {
-                    bitmap = tools.OperationOnImage.MakeOperation(bitmap, t);
-                }
+                bitmap = CutRectangle.CutImage(bitmap, cutImage.X, cutImage.Y, cutImage.Width, cutImage.Height);
                 photoCanvas.Background = openedImageObject.putImage(OpenedImageObject.convertToBitmapImage(bitmap), photoCanvas.ActualWidth, photoCanvas.ActualHeight);
-                for (int i = 0; i < operationsOnImages.Length; i++)
-                {
-                    for (int j = 0; j < tempOperationsList.Count; j++)
-                    {
-                        operationsOnImages[i].Add(tempOperationsList[j]);
-                    }
-                }
-                tempOperationsList.Clear();
             }
+            for (int i = 0; i < operationsOnImages.Length; i++)
+            {
+                for (int j = 0; j < tempOperationsList.Count; j++)
+                {
+                    operationsOnImages[i].Add(tempOperationsList[j]);
+                }
+            }
+            tempOperationsList.Clear();
             restartParameters();
         }
 
