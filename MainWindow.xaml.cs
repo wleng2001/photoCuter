@@ -274,7 +274,13 @@ namespace photoCuter
                 cutImage.Height = CutRectangleWithCorner.HeightWithoutScale;
                 tempOperationsList.Add(cutImage);
                 openedImageObject.updateImageSource(bitmap);
+
+                sw1.Restart();
+                sw1.Start();
                 bitmap = CutRectangle.CutImage(bitmap, cutImage.X, cutImage.Y, cutImage.Width, cutImage.Height);
+                sw1.Stop();
+                MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString() + "s", "Cut");
+
                 photoCanvas.Background = openedImageObject.putImage(OpenedImageObject.convertToBitmapImage(bitmap), photoCanvas.ActualWidth, photoCanvas.ActualHeight);
             }
             for (int i = 0; i < operationsOnImages.Length; i++)

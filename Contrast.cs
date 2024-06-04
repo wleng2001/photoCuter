@@ -45,11 +45,15 @@ namespace tools
             t2.Start();
             Thread t3 = new Thread(updatePixel3);
             t3.Start();
+            
+            
             t0.Join();
             t1.Join();
             t2.Join();
-            t3.Join();
+            t3.Join(); 
+
             //updatePixel(image, newBitmap, contrast, 1, 0);
+
             return newBitmap;
         }
 
@@ -70,7 +74,7 @@ namespace tools
                 Monitor.Exit(image);
             }
 
-            for (int i = pixel; i < height; i+=whichPixel)
+            for (int i = 0; i < height; i++)
             {
                 for (int j = pixel; j < width; j+=whichPixel)
                 {

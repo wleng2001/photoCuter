@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace tools
 {
@@ -26,7 +27,8 @@ namespace tools
             }
         }
 
-        static object monitorObject = new object();
+        static object monitorObject0 = new object();
+        static object monitorObject1 = new object();
 
         public Brightness(int multiplier) 
         { 
@@ -66,20 +68,31 @@ namespace tools
             {
                 updatePixel(image, newImage, m, 4, 3);
             }
-            /*
+            
             Thread t0 = new Thread(updatePixel0);
-            t0.Start();
+            t0.Name = "t0";
+            
             Thread t1 = new Thread(updatePixel1);
-            t1.Start();
+            t1.Name = "t1";
+            
             Thread t2 = new Thread(updatePixel2);
-            t2.Start();
+            t2.Name = "t2";
+            
             Thread t3 = new Thread(updatePixel3);
+            t3.Name = "t3";
+            
+            t0.Start();
+            t1.Start();
+            t2.Start();
             t3.Start();
+
+            
             t0.Join();
             t1.Join();
             t2.Join();
-            t3.Join();*/
-            updatePixel(image, newImage, m, 1, 0);
+            t3.Join();
+
+            //updatePixel(image, newImage, m, 1, 0);
 
             return newImage;
 
@@ -90,47 +103,50 @@ namespace tools
 
             int width;
             int height;
+    
             try
             {
-                Monitor.Enter(image);
+                Monitor.Enter(monitorObject0);
                 width = image.Width;
                 height = image.Height;
             }
             finally
             {
-                Monitor.Exit(image);
+                Monitor.Exit(monitorObject0);
             }
-            
-            for (int i = pixel; i < width; i+=whichPixel)
+            for (int i = 0; i < width; i++)
             {
+                
                 for (int j = pixel; j < height; j+=whichPixel)
                 {
                     Color pxl;
+                 
                     try
                     {
-                        Monitor.Enter(image);
+                        Monitor.Enter(monitorObject0);
                         pxl = image.GetPixel(i, j);
                     }
                     finally
                     {
-                        Monitor.Exit(image);
+                        Monitor.Exit(monitorObject0);
                     }
-                    
+
                     int R = addNumber(m, pxl.R);
                     int G = addNumber(m, pxl.G);
                     int B = addNumber(m, pxl.B);
                     pxl = Color.FromArgb(pxl.A, R, G, B);
 
+                    
                     try
                     {
-                        Monitor.Enter(monitorObject);
+                        Monitor.Enter(monitorObject1);
                         newImage.SetPixel(i, j, pxl);
                     }
                     finally
                     {
-                        Monitor.Exit(monitorObject);
+                        Monitor.Exit(monitorObject1);
                     }
-                    
+
                 }
             }
             

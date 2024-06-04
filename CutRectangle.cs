@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Security.Policy;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -288,22 +289,53 @@ namespace photoCuter
 
         static public Bitmap CutImage(Bitmap image, int tempX, int tempY, int tempWidth, int tempHeight)
         {
+            int width = image.Width;
+            int height = image.Height;
             Bitmap newImage = new Bitmap(tempWidth, tempHeight);
+            object monitorObject = new object();
 
-            for (int i = 0; i < tempWidth; i++)
+            void cutPixel(int whichPixel, int pixel)
             {
-                for (int j = 0; j < tempHeight; j++)
+                Color pxl;
+                
+
+                for (int i = 0; i < tempWidth; i++)
                 {
-                    if(image.Width<tempX+i-1 || image.Height < tempY + j-1)
+                    for (int j = 0; j < tempHeight; j++)
                     {
-                        continue;
+                        if (width < tempX + i - 1 || height < tempY + j - 1)
+                        {
+                            continue;
+                        }
+                        try
+                        {
+                            Monitor.Enter(image);
+                            pxl = image.GetPixel(tempX + i, (tempY + j));
+                        }
+                        finally
+                        {
+                            Monitor.Exit(image);
+                        }
+                        try
+                        {
+                            Monitor.Enter(monitorObject); 
+                            newImage.SetPixel(i, j, pxl);
+                        }
+                        finally
+                        {
+                            Monitor.Exit(monitorObject);
+                        }
+                        
                     }
-                    Color pxl = image.GetPixel(tempX + i, (tempY + j));
-                    newImage.SetPixel(i, j, pxl);
                 }
             }
+            
+            cutPixel(1, 0);
+
             return newImage;
         }
+
+        
         
     }
 }
