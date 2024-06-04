@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -36,6 +37,8 @@ namespace photoCuter
         OperationsOnImageList tempOperationsList;
         byte quantityOfOperationOnImage = 3;
         CutRectangle CutRectangleWithCorner;
+
+        Stopwatch sw1 = new Stopwatch();
 
         Bitmap tempBitmap;
 
@@ -122,7 +125,11 @@ namespace photoCuter
                 if(openedImageObject != null)
                 {
                     Bitmap bitmap = setBrightness((float)brightnessSlider.Value, openedImageObject.OpenedBitmap);
+                    sw1.Restart();
+                    sw1.Start();
                     bitmap = setContrast((float)contrastSlider.Value, bitmap);
+                    sw1.Stop();
+                    MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString()+"s", "Contrast");
                     tempBitmap = bitmap;
                     photoCanvas.Background = OpenedImageObject.convertToBrush(OpenedImageObject.convertToBitmapImage(bitmap));
                 }
@@ -161,7 +168,11 @@ namespace photoCuter
                 if (openedImageObject != null)
                 {
                     Bitmap bitmap = setContrast((float)contrastSlider.Value, openedImageObject.OpenedBitmap);
+                    sw1.Restart();
+                    sw1.Start();
                     bitmap = setBrightness((float)brightnessSlider.Value, bitmap);
+                    sw1.Stop();
+                    MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString() + "s", "Brightness");
                     tempBitmap = bitmap;
                     photoCanvas.Background = OpenedImageObject.convertToBrush(OpenedImageObject.convertToBitmapImage(bitmap));
                 }
@@ -299,7 +310,6 @@ namespace photoCuter
                     String[] fileSplit = files[i].Split('\\');
                     String fileName = fileSplit[fileSplit.Length - 1];
                     String path = dialog.FileName + "\\" + fileName;
-                    MessageBox.Show(path);
 
                     foreach (var o in operationsOnImages[i])
                     {
@@ -313,6 +323,11 @@ namespace photoCuter
 
         private void brightnessSlider_ManipulationCompleted(object sender, ManipulationCompletedEventArgs e)
         {
+        }
+
+        private void brightnessSlider_DragOver(object sender, DragEventArgs e)
+        {
+            MessageBox.Show("napis");
         }
     }
 }

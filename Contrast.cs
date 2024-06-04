@@ -4,27 +4,91 @@ using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace tools
 {
     internal class Contrast
     {
-
+        static object monitorClass = new object();
         static public Bitmap setContrast(Bitmap image, float contrast)
         {
             Bitmap newBitmap = new Bitmap(image.Width, image.Height);
             contrast = (10 * contrast) / 10;
 
-            for (int i = 0; i < image.Height; i++)
+            void updatePixel0()
             {
-                for (int j = 0; j < image.Width; j++)
-                {
-                    Color pixel = image.GetPixel(j, i);
+                updatePixel(image, newBitmap, contrast, 4, 0);
+            }
 
-                    float red = pixel.R / 255.0f;
-                    float green = pixel.G / 255.0f;
-                    float blue = pixel.B / 255.0f;
+            void updatePixel1()
+            {
+                updatePixel(image, newBitmap, contrast, 4, 1);
+            }
+            
+            void updatePixel2()
+            {
+                updatePixel(image, newBitmap, contrast, 4, 2);
+            }
+
+            void updatePixel3()
+            {
+                updatePixel(image, newBitmap, contrast, 4, 3);
+            }
+            
+            Thread t0 = new Thread(updatePixel0);
+            t0.Start();
+            Thread t1 = new Thread(updatePixel1);
+            t1.Start();
+            Thread t2 = new Thread(updatePixel2);
+            t2.Start();
+            Thread t3 = new Thread(updatePixel3);
+            t3.Start();
+            t0.Join();
+            t1.Join();
+            t2.Join();
+            t3.Join();
+            //updatePixel(image, newBitmap, contrast, 1, 0);
+            return newBitmap;
+        }
+
+        static private void updatePixel(Bitmap image, Bitmap newBitmap, float contrast, int whichPixel, int pixel)
+        {
+            int width;
+            int height;
+            Color pxl;
+
+            try
+            {
+                Monitor.Enter(image);
+                width = image.Width;
+                height = image.Height;
+            }
+            finally
+            {
+                Monitor.Exit(image);
+            }
+
+            for (int i = pixel; i < height; i+=whichPixel)
+            {
+                for (int j = pixel; j < width; j+=whichPixel)
+                {
+                   
+                    try
+                    {
+                        Monitor.Enter(image);
+                        pxl = image.GetPixel(j, i);
+                    }
+                    finally
+                    {
+                        Monitor.Exit(image);
+                    }
+                    
+
+                    float red = pxl.R / 255.0f;
+                    float green = pxl.G / 255.0f;
+                    float blue = pxl.B / 255.0f;
 
                     red = (((red - 0.5f) * contrast) + 0.5f) * 255.0f;
                     green = (((green - 0.5f) * contrast) + 0.5f) * 255.0f;
@@ -34,10 +98,19 @@ namespace tools
                     int g = Math.Max(0, Math.Min(255, (int)green));
                     int b = Math.Max(0, Math.Min(255, (int)blue));
 
-                    newBitmap.SetPixel(j, i, Color.FromArgb(r, g, b));
+                    try
+                    {
+                        Monitor.Enter(monitorClass);
+                        newBitmap.SetPixel(j, i, Color.FromArgb(r, g, b));
+                    }
+                    finally
+                    {
+                        Monitor.Exit(monitorClass);
+                    }
+                    
                 }
             }
-            return newBitmap;
+
         }
     }
 }
