@@ -301,7 +301,7 @@ namespace photoCuter
 
                 for (int i = 0; i < tempWidth; i++)
                 {
-                    for (int j = 0; j < tempHeight; j++)
+                    for (int j = pixel; j < tempHeight; j+=whichPixel)
                     {
                         if (width < tempX + i - 1 || height < tempY + j - 1)
                         {
@@ -330,7 +330,42 @@ namespace photoCuter
                 }
             }
             
-            cutPixel(1, 0);
+            void cutPixel0()
+            {
+                cutPixel(4, 0);
+            }
+
+            void cutPixel1()
+            {
+                cutPixel(4, 1);
+            }
+
+            void cutPixel2()
+            {
+                cutPixel(4, 2);
+            }
+
+            void cutPixel3()
+            {
+                cutPixel(4, 3);
+            }
+
+            
+            Thread t0 = new Thread(cutPixel0);
+            t0.Start();
+            Thread t1 = new Thread(cutPixel1);
+            t1.Start();
+            Thread t2 = new Thread(cutPixel2);
+            t2.Start();
+            Thread t3 = new Thread(cutPixel3);
+            t3.Start();
+
+            t0.Join();
+            t1.Join();
+            t2.Join();
+            t3.Join();
+
+            //cutPixel(1, 0);
 
             return newImage;
         }
