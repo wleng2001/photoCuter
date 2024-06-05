@@ -43,7 +43,7 @@
                     </CheckBox>
                 </StackPanel>
                 <Button Name="confirmButton" Content="Confirm" Width="115" Click="confirmButton_Click"/>
-                <ListBox Name="ImageList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0, 10, 0, 0"/>
+                <ListBox Name="operationsList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0, 10, 0, 0"/>
 
             </StackPanel>
         </Border>

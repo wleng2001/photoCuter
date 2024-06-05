@@ -16,6 +16,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using tools;
@@ -107,6 +108,10 @@ namespace photoCuter
             if (tempOperationsList.Count >= quantityOfOperationOnImage - 1)
             {
                 tempOperationsList.Clear();
+                for (byte i = 1; i < quantityOfOperationOnImage; i++)
+                {
+                    operationsList.Items.RemoveAt(operationsList.Items.Count  - i);
+                }
             }
             tempOperationsList.Add(
                 new tools.OperationOnImage()
@@ -114,6 +119,9 @@ namespace photoCuter
                     OperationType = tools.OperationOnImage.Contrast,
                     Value = cont
                 });
+
+            operationsList.Items.Add("Contrast" + "\t" + cont);
+
             return tools.Contrast.setContrast(bitmap, cont);
 
         }
@@ -151,6 +159,10 @@ namespace photoCuter
             if (tempOperationsList.Count >= quantityOfOperationOnImage - 1)
             {
                 tempOperationsList.Clear();
+                for(byte i = 1; i < quantityOfOperationOnImage; i++)
+                {
+                    operationsList.Items.RemoveAt(operationsList.Items.Count  - i);
+                }
             }
             tempOperationsList.Add(
                 new tools.OperationOnImage()
@@ -158,6 +170,9 @@ namespace photoCuter
                     OperationType = tools.OperationOnImage.Brightness,
                     Value = bright
                 });
+
+            operationsList.Items.Add("Brightness" + "\t" + bright);
+
             return image;
         }
         private void settinBrightnessTextBox_ClickEnter(object sender, KeyEventArgs e)
@@ -185,6 +200,7 @@ namespace photoCuter
 
         }
 
+        //Open click
         private async void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             var dialogForm = new Microsoft.Win32.OpenFileDialog();
@@ -209,6 +225,7 @@ namespace photoCuter
                 tempOperationsList = new OperationsOnImageList(3);
                 tempBitmap = openedImageObject.OpenedBitmap;
 
+                operationsList.Items.Clear();
             }
         }
 
@@ -281,7 +298,11 @@ namespace photoCuter
                 sw1.Stop();
                 MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString() + "s", "Cut");
 
+                tempBitmap = bitmap;
+
                 photoCanvas.Background = openedImageObject.putImage(OpenedImageObject.convertToBitmapImage(bitmap), photoCanvas.ActualWidth, photoCanvas.ActualHeight);
+
+                operationsList.Items.Add("Cut" + "\t" + CutRectangleWithCorner.WidthWithoutScale + "X" + CutRectangleWithCorner.HeightWithoutScale);
             }
             for (int i = 0; i < operationsOnImages.Length; i++)
             {
