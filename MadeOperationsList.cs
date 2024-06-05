@@ -66,7 +66,7 @@ namespace photoCuter
             tempOperationsList.Clear();
         }
 
-        public void ClearTempOperation()
+        public void ClearTempOperations()
         {
             int itemsOnOperationList = operationsListView.Items.Count;
             for (byte i = 1; i < tempOperationsList.Count; i++)

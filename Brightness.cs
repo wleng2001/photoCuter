@@ -42,6 +42,10 @@ namespace tools
             {
                 c = 255;
             }
+            if(c<0)
+            {
+                c = 0;
+            }
             return (byte)c;
         }
         static public Bitmap SetBrightness(Bitmap image, float bright,int multiplier)
