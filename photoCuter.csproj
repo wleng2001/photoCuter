@@ -67,6 +67,7 @@
     <Compile Include="Brightness.cs" />
     <Compile Include="Contrast.cs" />
     <Compile Include="CutRectangle.cs" />
+    <Compile Include="MadeOperationsList.cs" />
     <Compile Include="OperationOnImage.cs" />
     <Compile Include="OpenedImageObject.cs" />
     <Compile Include="MainWindow.xaml.cs">

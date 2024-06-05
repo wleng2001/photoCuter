@@ -34,10 +34,9 @@ namespace photoCuter
     {
         string[] files;
         OpenedImageObject openedImageObject;
-        OperationsOnImageList[] operationsOnImages;
-        OperationsOnImageList tempOperationsList;
         byte quantityOfOperationOnImage = 3;
         CutRectangle CutRectangleWithCorner;
+        MadeOperationsList madeOperationsList;
 
         Stopwatch sw1 = new Stopwatch();
 
@@ -89,10 +88,11 @@ namespace photoCuter
 
         private Bitmap setContrast(float cont, Bitmap bitmap)
         {
+
             if (cont == 0)
             {
                 cont = 1;
-                return bitmap;
+               
             }
             else
             {
@@ -105,22 +105,15 @@ namespace photoCuter
                     cont = cont + 1;
                 }
             }
-            if (tempOperationsList.Count >= quantityOfOperationOnImage - 1)
+            if (madeOperationsList.TempListLength >= quantityOfOperationOnImage - 1)
             {
-                tempOperationsList.Clear();
-                for (byte i = 1; i < quantityOfOperationOnImage; i++)
-                {
-                    operationsList.Items.RemoveAt(operationsList.Items.Count  - i);
-                }
+                madeOperationsList.ClearTempOperations();
             }
-            tempOperationsList.Add(
-                new tools.OperationOnImage()
-                {
-                    OperationType = tools.OperationOnImage.Contrast,
-                    Value = cont
-                });
-
-            operationsList.Items.Add("Contrast" + "\t" + cont);
+            madeOperationsList.AddTempOpearation(new OperationOnImage
+            {
+                OperationType = OperationOnImage.Contrast,
+                Value = cont,
+            });
 
             return tools.Contrast.setContrast(bitmap, cont);
 
@@ -156,22 +149,15 @@ namespace photoCuter
             {
                 image = bitmap;
             }
-            if (tempOperationsList.Count >= quantityOfOperationOnImage - 1)
+            if (madeOperationsList.TempListLength >= quantityOfOperationOnImage - 1)
             {
-                tempOperationsList.Clear();
-                for(byte i = 1; i < quantityOfOperationOnImage; i++)
-                {
-                    operationsList.Items.RemoveAt(operationsList.Items.Count  - i);
-                }
+                madeOperationsList.ClearTempOperations();
             }
-            tempOperationsList.Add(
-                new tools.OperationOnImage()
-                {
-                    OperationType = tools.OperationOnImage.Brightness,
-                    Value = bright
-                });
-
-            operationsList.Items.Add("Brightness" + "\t" + bright);
+            madeOperationsList.AddTempOpearation(new OperationOnImage
+            {
+                OperationType = OperationOnImage.Brightness,
+                Value = bright,
+            });
 
             return image;
         }
@@ -212,20 +198,16 @@ namespace photoCuter
             if(result == true)
             {
                 files = dialogForm.FileNames;
-                operationsOnImages = new OperationsOnImageList[files.Length];
-                for(int i = 0; i< files.Length; i++)
-                {
-                    operationsOnImages[i] = new OperationsOnImageList();
-                }
+                madeOperationsList = new MadeOperationsList(quantityOfOperationOnImage, operationsList, files.Length);
+
                 openedImageObject = new OpenedImageObject();
                 ImageBrush iB = openedImageObject.putImage(new BitmapImage(new Uri(files[0])), photoCanvas.ActualWidth, photoCanvas.ActualHeight);
                 photoCanvas.Background = iB;
                 CutRectangleWithCorner = new CutRectangle(openedImageObject, photoCanvas, cutRectangle, cutRectangleThumbLeft, cutRectangleThumbRight);
                 CutRectangleWithCorner.putRectangle();
-                tempOperationsList = new OperationsOnImageList(3);
                 tempBitmap = openedImageObject.OpenedBitmap;
 
-                operationsList.Items.Clear();
+                madeOperationsList.ClearOperations();
             }
         }
 
@@ -289,7 +271,7 @@ namespace photoCuter
                 cutImage.Y = CutRectangleWithCorner.YWithoutScale;
                 cutImage.Width = CutRectangleWithCorner.WidthWithoutScale;
                 cutImage.Height = CutRectangleWithCorner.HeightWithoutScale;
-                tempOperationsList.Add(cutImage);
+                madeOperationsList.AddTempOpearation(cutImage);
                 openedImageObject.updateImageSource(bitmap);
 
                 sw1.Restart();
@@ -302,16 +284,9 @@ namespace photoCuter
 
                 photoCanvas.Background = openedImageObject.putImage(OpenedImageObject.convertToBitmapImage(bitmap), photoCanvas.ActualWidth, photoCanvas.ActualHeight);
 
-                operationsList.Items.Add("Cut" + "\t" + CutRectangleWithCorner.WidthWithoutScale + "X" + CutRectangleWithCorner.HeightWithoutScale);
             }
-            for (int i = 0; i < operationsOnImages.Length; i++)
-            {
-                for (int j = 0; j < tempOperationsList.Count; j++)
-                {
-                    operationsOnImages[i].Add(tempOperationsList[j]);
-                }
-            }
-            tempOperationsList.Clear();
+            madeOperationsList.MigrateToMainImageOperation();
+            madeOperationsList.RemoveTempOperations();
             restartParameters();
         }
 
@@ -338,7 +313,7 @@ namespace photoCuter
                     String fileName = fileSplit[fileSplit.Length - 1];
                     String path = dialog.FileName + "\\" + fileName;
 
-                    foreach (var o in operationsOnImages[i])
+                    foreach (var o in madeOperationsList[i])
                     {
                         b = OperationOnImage.MakeOperation(b, o);
                     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,6 +17,20 @@ namespace tools
         public int Width;
         public int Height;
         public double Value;
+        public string StrValue
+        {
+            get
+            {
+                if(OperationType == CutImage)
+                {
+                    return Width + "X" + Height;
+                }
+                else
+                {
+                    return Value.ToString();
+                }
+            }
+        }
         static public String CutImage { get; } = "CutImage";
         static public String Brightness { get; } = "Brightness";
         static public String Contrast { get; } = "Contrast";
