@@ -63,6 +63,20 @@ namespace tools
             int height;
             Color pxl;
 
+            int combineValues(float value)
+            {
+                int v = (int)(contrast * (value - 127) + 127);
+                if(v < 0)
+                {
+                    v = 0;
+                }else if(v > 255)
+                {
+                    v = 255;
+                }
+
+                return v;
+            }
+
             try
             {
                 Monitor.Enter(image);
@@ -88,19 +102,10 @@ namespace tools
                     {
                         Monitor.Exit(image);
                     }
-                    
 
-                    float red = pxl.R / 255.0f;
-                    float green = pxl.G / 255.0f;
-                    float blue = pxl.B / 255.0f;
-
-                    red = (((red - 0.5f) * contrast) + 0.5f) * 255.0f;
-                    green = (((green - 0.5f) * contrast) + 0.5f) * 255.0f;
-                    blue = (((blue - 0.5f) * contrast) + 0.5f) * 255.0f;
-
-                    int r = Math.Max(0, Math.Min(255, (int)red));
-                    int g = Math.Max(0, Math.Min(255, (int)green));
-                    int b = Math.Max(0, Math.Min(255, (int)blue));
+                    int r = combineValues(pxl.R);
+                    int g = combineValues(pxl.G);
+                    int b = combineValues(pxl.B);
 
                     try
                     {

@@ -69,7 +69,7 @@ namespace photoCuter
         public void ClearTempOperations()
         {
             int itemsOnOperationList = operationsListView.Items.Count;
-            for (byte i = 1; i < tempOperationsList.Count; i++)
+            for (byte i = 1; i <= tempOperationsList.Count; i++)
             {
                 Items.RemoveAt(itemsOnOperationList - i);
             }
