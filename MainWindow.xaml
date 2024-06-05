@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:photoCuter"
         mc:Ignorable="d"
-        Title="MainWindow" Height="579" Width="914" ResizeMode="CanResize" WindowStartupLocation="CenterScreen" WindowState="Maximized" SizeChanged="Main_SizeChanged"
+        Title="photoCuter" Height="579" Width="914" ResizeMode="CanResize" WindowStartupLocation="CenterScreen" WindowState="Maximized" SizeChanged="Main_SizeChanged"
         MinWidth="460" MinHeight="400"
         >
     <Grid>
@@ -46,9 +46,9 @@
                 <Label Name="operationListDescription" Content="Made operations" FontSize="14"/>
                 <ListView x:Name="operationsList" Height="100" ScrollViewer.VerticalScrollBarVisibility="Visible">
                     <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="opeartion" DisplayMemberBinding="{Binding operation}" Width="Auto"/>
-                            <GridViewColumn Header="value" DisplayMemberBinding="{Binding value}" Width="Auto"/>
+                        <GridView >
+                            <GridViewColumn Header="opeartion" DisplayMemberBinding="{Binding operation}" Width="110" />
+                            <GridViewColumn Header="value" DisplayMemberBinding="{Binding value}" Width="130"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
