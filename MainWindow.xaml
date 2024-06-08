@@ -33,11 +33,11 @@
                     <TextBox Name="settingConstrastTextBox" Text="0" Width="65" HorizontalContentAlignment="Right" KeyDown="settingConstrastTextBox_ClickEnter" Height="19"/>
                 </StackPanel>
                 <Label Content="Choosen operations" FontSize="14"/>
-                <ListView x:Name="tempOpearationsList" Height="100">
+                <ListView x:Name="tempOpearationsList" Height="70">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="operation" DisplayMemberBinding="{Binding operation}" Width="110"/>
-                            <GridViewColumn Header="value" DisplayMemberBinding="{Binding value}" Width="165"/>
+                            <GridViewColumn Header="value" DisplayMemberBinding="{Binding value}" Width="150"/>
                         </GridView> 
                     </ListView.View>
                 </ListView>
@@ -60,7 +60,7 @@
                     <ListView.View>
                         <GridView >
                             <GridViewColumn Header="opeartion" DisplayMemberBinding="{Binding operation}" Width="110" />
-                            <GridViewColumn Header="value" DisplayMemberBinding="{Binding value}" Width="130"/>
+                            <GridViewColumn Header="value" DisplayMemberBinding="{Binding value}" Width="135"/>
                         </GridView>
                     </ListView.View>
                 </ListView>
