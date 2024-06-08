@@ -30,17 +30,21 @@ namespace photoCuter
             }
         }
         ListView operationsListView;
+        ListView tempOperationsListView;
 
         ObservableCollection<ListViewItem> Items = new ObservableCollection<ListViewItem>();
+        ObservableCollection<ListViewItem> tempItems = new ObservableCollection<ListViewItem>();
 
         public OperationsOnImageList this[int photoNumber]
         {
             get { return operationsOnImages[photoNumber]; }
         }
-        public MadeOperationsList(byte quantityOfOperationOnImage, ListView operationsListView, int photosQuantity)
+        public MadeOperationsList(byte quantityOfOperationOnImage, ListView operationsListView, ListView tempOperationsListView, int photosQuantity)
         {
             this.quantityOfOperationOnImage = quantityOfOperationOnImage;
             this.operationsListView = operationsListView;
+            this.tempOperationsListView = tempOperationsListView;
+            tempOperationsListView.ItemsSource = tempItems;
             operationsOnImages = new OperationsOnImageList[photosQuantity];
             for (int i = 0; i < photosQuantity; i++)
             {
@@ -54,7 +58,7 @@ namespace photoCuter
         {
             tempOperationsList.Add(operation);
 
-            Items.Add(new ListViewItem()
+            tempItems.Add(new ListViewItem()
             {
                 operation = operation.OperationType,
                 value = operation.StrValue
@@ -64,21 +68,25 @@ namespace photoCuter
         public void RemoveTempOperations()
         {
             tempOperationsList.Clear();
+            tempItems.Clear();
         }
 
         public void ClearTempOperations()
         {
+            /*
             int itemsOnOperationList = operationsListView.Items.Count;
             for (byte i = 1; i <= tempOperationsList.Count; i++)
             {
                 Items.RemoveAt(itemsOnOperationList - i);
-            }
+            }*/
+            tempItems.Clear();
             RemoveTempOperations();
         }
 
         public void ClearOperations(int image)
         {
             Items.Clear();
+            tempItems.Clear();
             tempOperationsList.Clear();
             operationsOnImages[image].Clear();
         }
@@ -98,6 +106,7 @@ namespace photoCuter
                 for (int j = 0; j < tempOperationsList.Count; j++)
                 {
                     operationsOnImages[imageNumber].Add(tempOperationsList[j]);
+                    Items.Add(tempItems[j]);
                 }
             }
         }

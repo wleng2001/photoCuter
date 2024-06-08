@@ -198,7 +198,7 @@ namespace photoCuter
             if(result == true)
             {
                 files = dialogForm.FileNames;
-                madeOperationsList = new MadeOperationsList(quantityOfOperationOnImage, operationsList, files.Length);
+                madeOperationsList = new MadeOperationsList(quantityOfOperationOnImage, operationsList, tempOpearationsList, files.Length);
 
                 openedImageObject = new OpenedImageObject();
                 ImageBrush iB = openedImageObject.putImage(new BitmapImage(new Uri(files[0])), photoCanvas.ActualWidth, photoCanvas.ActualHeight);

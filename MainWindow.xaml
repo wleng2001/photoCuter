@@ -29,6 +29,15 @@
                     <Label Name="settingContrastLabel" Content="Setting contrast: " HorizontalAlignment="Center"/>
                     <TextBox Name="settingConstrastTextBox" Text="0" Width="65" HorizontalContentAlignment="Right" KeyDown="settingConstrastTextBox_ClickEnter" Height="19"/>
                 </StackPanel>
+                <Label Content="Choosen operations" FontSize="14"/>
+                <ListView x:Name="tempOpearationsList" Height="100">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="operation" DisplayMemberBinding="{Binding operation}" Width="110"/>
+                            <GridViewColumn Header="value" DisplayMemberBinding="{Binding value}" Width="165"/>
+                        </GridView> 
+                    </ListView.View>
+                </ListView>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <Label Name="cutPhotoLabel" Content="Cut photo" HorizontalContentAlignment="Left" Width="136" FontSize="14"/>
                     <CheckBox Name="cutPhotCheckBox" RenderTransformOrigin="0.5,0.5" Width="27" Height="15" Checked="CheckBox_Checked">
