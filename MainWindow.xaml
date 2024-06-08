@@ -14,6 +14,9 @@
                 <MenuItem Header="_Save" Click="MenuItem_Click_1"></MenuItem>
                 <MenuItem Header="_Open" Click="MenuItem_Click"></MenuItem>
             </MenuItem>
+            <MenuItem Header="_Debug">
+                <MenuItem Name="timeOfOperationsMenuItem" Header="_Time of Operation" Click="MenuItem_Click_2"/>
+            </MenuItem>
         </Menu>
         <Border Margin="0,27,5,5" Width="275" HorizontalAlignment="Right" BorderBrush="Gray" BorderThickness="1">
             <StackPanel x:Name="optionsStacPanel" Margin="0" Orientation="Vertical" HorizontalAlignment="Stretch" >

@@ -42,6 +42,8 @@ namespace photoCuter
 
         Bitmap tempBitmap;
 
+        bool timeOfOperationsDebug = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -130,7 +132,8 @@ namespace photoCuter
                     sw1.Start();
                     bitmap = setContrast((float)contrastSlider.Value, bitmap);
                     sw1.Stop();
-                    MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString()+"s", "Contrast");
+                    if(timeOfOperationsDebug)
+                        MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString()+"s", "Contrast");
                     tempBitmap = bitmap;
                     photoCanvas.Background = OpenedImageObject.convertToBrush(OpenedImageObject.convertToBitmapImage(bitmap));
                 }
@@ -173,7 +176,8 @@ namespace photoCuter
                     sw1.Start();
                     bitmap = setBrightness((float)brightnessSlider.Value, bitmap);
                     sw1.Stop();
-                    MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString() + "s", "Brightness");
+                    if(timeOfOperationsDebug)
+                        MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString() + "s", "Brightness");
                     tempBitmap = bitmap;
                     photoCanvas.Background = OpenedImageObject.convertToBrush(OpenedImageObject.convertToBitmapImage(bitmap));
                 }
@@ -278,7 +282,8 @@ namespace photoCuter
                 sw1.Start();
                 bitmap = CutRectangle.CutImage(bitmap, cutImage.X, cutImage.Y, cutImage.Width, cutImage.Height);
                 sw1.Stop();
-                MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString() + "s", "Cut");
+                if(timeOfOperationsDebug)
+                    MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString() + "s", "Cut");
 
                 tempBitmap = bitmap;
 
@@ -330,6 +335,12 @@ namespace photoCuter
         private void brightnessSlider_DragOver(object sender, DragEventArgs e)
         {
             MessageBox.Show("napis");
+        }
+
+        private void MenuItem_Click_2(object sender, RoutedEventArgs e)
+        {
+            timeOfOperationsMenuItem.IsChecked = !timeOfOperationsMenuItem.IsChecked;
+            timeOfOperationsDebug = !timeOfOperationsDebug;
         }
     }
 }
