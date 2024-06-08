@@ -27,7 +27,8 @@ namespace tools
                 }
                 else
                 {
-                    return Value.ToString();
+                    float v = (float)Math.Round(Value, 1);
+                    return v.ToString();
                 }
             }
         }
