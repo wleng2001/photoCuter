@@ -264,35 +264,39 @@ namespace photoCuter
 
         private void confirmButton_Click(object sender, RoutedEventArgs e)
         {
-            openedImageObject.updateImageSize(photoCanvas.ActualWidth, photoCanvas.ActualHeight);
-            Bitmap bitmap = tempBitmap;
-
-            if ((bool)cutPhotCheckBox.IsChecked)
+            if (openedImageObject != null)
             {
-                tools.OperationOnImage cutImage = new tools.OperationOnImage();
-                cutImage.OperationType = tools.OperationOnImage.CutImage;
-                cutImage.X = CutRectangleWithCorner.XWithoutScale;
-                cutImage.Y = CutRectangleWithCorner.YWithoutScale;
-                cutImage.Width = CutRectangleWithCorner.WidthWithoutScale;
-                cutImage.Height = CutRectangleWithCorner.HeightWithoutScale;
-                madeOperationsList.AddTempOpearation(cutImage);
-                openedImageObject.updateImageSource(bitmap);
 
-                sw1.Restart();
-                sw1.Start();
-                bitmap = CutRectangle.CutImage(bitmap, cutImage.X, cutImage.Y, cutImage.Width, cutImage.Height);
-                sw1.Stop();
-                if(timeOfOperationsDebug)
-                    MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString() + "s", "Cut");
+                openedImageObject.updateImageSize(photoCanvas.ActualWidth, photoCanvas.ActualHeight);
+                Bitmap bitmap = tempBitmap;
 
-                tempBitmap = bitmap;
+                if ((bool)cutPhotCheckBox.IsChecked)
+                {
+                    tools.OperationOnImage cutImage = new tools.OperationOnImage();
+                    cutImage.OperationType = tools.OperationOnImage.CutImage;
+                    cutImage.X = CutRectangleWithCorner.XWithoutScale;
+                    cutImage.Y = CutRectangleWithCorner.YWithoutScale;
+                    cutImage.Width = CutRectangleWithCorner.WidthWithoutScale;
+                    cutImage.Height = CutRectangleWithCorner.HeightWithoutScale;
+                    madeOperationsList.AddTempOpearation(cutImage);
+                    openedImageObject.updateImageSource(bitmap);
 
-                photoCanvas.Background = openedImageObject.putImage(OpenedImageObject.convertToBitmapImage(bitmap), photoCanvas.ActualWidth, photoCanvas.ActualHeight);
+                    sw1.Restart();
+                    sw1.Start();
+                    bitmap = CutRectangle.CutImage(bitmap, cutImage.X, cutImage.Y, cutImage.Width, cutImage.Height);
+                    sw1.Stop();
+                    if (timeOfOperationsDebug)
+                        MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString() + "s", "Cut");
 
+                    tempBitmap = bitmap;
+
+                    photoCanvas.Background = openedImageObject.putImage(OpenedImageObject.convertToBitmapImage(bitmap), photoCanvas.ActualWidth, photoCanvas.ActualHeight);
+
+                }
+                madeOperationsList.MigrateToMainImageOperation();
+                madeOperationsList.RemoveTempOperations();
+                restartParameters();
             }
-            madeOperationsList.MigrateToMainImageOperation();
-            madeOperationsList.RemoveTempOperations();
-            restartParameters();
         }
 
         void saveFiles(String dir)
