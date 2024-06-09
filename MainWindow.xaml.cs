@@ -120,23 +120,28 @@ namespace photoCuter
             return tools.Contrast.setContrast(bitmap, cont);
 
         }
+
+        void confirmSetContrast()
+        {
+            if (openedImageObject != null)
+            {
+                Bitmap bitmap = setBrightness((float)brightnessSlider.Value, openedImageObject.OpenedBitmap);
+                sw1.Restart();
+                sw1.Start();
+                bitmap = setContrast((float)contrastSlider.Value, bitmap);
+                sw1.Stop();
+                if (timeOfOperationsDebug)
+                    MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString() + "s", "Contrast");
+                tempBitmap = bitmap;
+                photoCanvas.Background = OpenedImageObject.convertToBrush(OpenedImageObject.convertToBitmapImage(bitmap));
+            }
+        }
         private void settingConstrastTextBox_ClickEnter(object sender, KeyEventArgs e)
         {
             if(e.Key == Key.Enter)
             {
                 setSliderWithTextBox(-10, 10, settingConstrastTextBox, contrastSlider);
-                if(openedImageObject != null)
-                {
-                    Bitmap bitmap = setBrightness((float)brightnessSlider.Value, openedImageObject.OpenedBitmap);
-                    sw1.Restart();
-                    sw1.Start();
-                    bitmap = setContrast((float)contrastSlider.Value, bitmap);
-                    sw1.Stop();
-                    if(timeOfOperationsDebug)
-                        MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString()+"s", "Contrast");
-                    tempBitmap = bitmap;
-                    photoCanvas.Background = OpenedImageObject.convertToBrush(OpenedImageObject.convertToBitmapImage(bitmap));
-                }
+                confirmSetContrast();
             }
 
         }
@@ -164,23 +169,28 @@ namespace photoCuter
 
             return image;
         }
+
+        void confirmSetBrightness()
+        {
+            if (openedImageObject != null)
+            {
+                Bitmap bitmap = setContrast((float)contrastSlider.Value, openedImageObject.OpenedBitmap);
+                sw1.Restart();
+                sw1.Start();
+                bitmap = setBrightness((float)brightnessSlider.Value, bitmap);
+                sw1.Stop();
+                if (timeOfOperationsDebug)
+                    MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString() + "s", "Brightness");
+                tempBitmap = bitmap;
+                photoCanvas.Background = OpenedImageObject.convertToBrush(OpenedImageObject.convertToBitmapImage(bitmap));
+            }
+        }
         private void settinBrightnessTextBox_ClickEnter(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
                 setSliderWithTextBox(-10, 10, settingBrightnessTextBox, brightnessSlider);
-                if (openedImageObject != null)
-                {
-                    Bitmap bitmap = setContrast((float)contrastSlider.Value, openedImageObject.OpenedBitmap);
-                    sw1.Restart();
-                    sw1.Start();
-                    bitmap = setBrightness((float)brightnessSlider.Value, bitmap);
-                    sw1.Stop();
-                    if(timeOfOperationsDebug)
-                        MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString() + "s", "Brightness");
-                    tempBitmap = bitmap;
-                    photoCanvas.Background = OpenedImageObject.convertToBrush(OpenedImageObject.convertToBitmapImage(bitmap));
-                }
+                confirmSetBrightness();
                 
             }
                 
@@ -345,6 +355,22 @@ namespace photoCuter
         {
             timeOfOperationsMenuItem.IsChecked = !timeOfOperationsMenuItem.IsChecked;
             timeOfOperationsDebug = !timeOfOperationsDebug;
+        }
+
+        private void brightnessSlider_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+            {
+                confirmSetBrightness();
+            }
+        }
+
+        private void contrastSlider_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Enter)
+            {
+                confirmSetContrast();
+            }
         }
     }
 }
