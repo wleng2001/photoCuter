@@ -6,53 +6,34 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace tools
 {
     internal class Contrast
     {
         static object monitorClass = new object();
-        static public Bitmap setContrast(Bitmap image, float contrast)
+        static public Bitmap setContrast(Bitmap image, float contrast, int threads)
         {
             Bitmap newBitmap = new Bitmap(image.Width, image.Height);
             contrast = (10 * contrast) / 10;
 
-            void updatePixel0()
+            Thread[] threadTab = new Thread[threads];
+            for(int i = 0; i<threads; i++)
             {
-                updatePixel(image, newBitmap, contrast, 4, 0);
+                int localI = i;
+                void updatePixelX()
+                {
+                    updatePixel(image, newBitmap, contrast, threads, localI);
+                }
+                threadTab[i] = new Thread(updatePixelX);
+                threadTab[i].Start();
             }
 
-            void updatePixel1()
+            foreach(Thread t in threadTab)
             {
-                updatePixel(image, newBitmap, contrast, 4, 1);
+                t.Join();
             }
-            
-            void updatePixel2()
-            {
-                updatePixel(image, newBitmap, contrast, 4, 2);
-            }
-
-            void updatePixel3()
-            {
-                updatePixel(image, newBitmap, contrast, 4, 3);
-            }
-            
-            Thread t0 = new Thread(updatePixel0);
-            t0.Start();
-            Thread t1 = new Thread(updatePixel1);
-            t1.Start();
-            Thread t2 = new Thread(updatePixel2);
-            t2.Start();
-            Thread t3 = new Thread(updatePixel3);
-            t3.Start();
-            
-            
-            t0.Join();
-            t1.Join();
-            t2.Join();
-            t3.Join(); 
-
-            //updatePixel(image, newBitmap, contrast, 1, 0);
 
             return newBitmap;
         }

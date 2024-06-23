@@ -11,11 +11,27 @@
     <Grid Margin="0,0,0,0">
         <Menu DockPanel.Dock ="Top" Height="22" VerticalAlignment="Top">
             <MenuItem Header="_Files">
-                <MenuItem Header="_Save" Click="MenuItem_Click_1"></MenuItem>
-                <MenuItem Header="_Open" Click="MenuItem_Click"></MenuItem>
+                <MenuItem Header="_Save" Click="MenuItem_Click_1" IsCheckable="False"></MenuItem>
+                <MenuItem Header="_Open" Click="MenuItem_Click" IsCheckable="False"></MenuItem>
             </MenuItem>
             <MenuItem Header="_Debug">
                 <MenuItem Name="timeOfOperationsMenuItem" Header="_Time of Operation" Click="MenuItem_Click_2"/>
+            </MenuItem>
+            <MenuItem Header="_Optimisation">
+                <MenuItem Header="_Auto"/>
+                <MenuItem Header="_MultiThreading">
+                    <MenuItem Name="MT1" Header="_1" Click="MenuItem_Click_MT1"/>
+                    <MenuItem Name="MT2" Header="_2" Click="MenuItem_Click_MT2"/>
+                    <MenuItem Name="MT4" Header="_4" IsChecked="True" Click="MenuItem_Click_MT4"/>
+                    <MenuItem Name="MT6" Header="_6" Click="MenuItem_Click_MT6"/>
+                    <MenuItem Name="MT8" Header="_8" Click="MT8_Click"/>
+                    <MenuItem Name="MT16" Header="_16" Click="MenuItem_Click_MT16"/>
+                </MenuItem>
+                <MenuItem Header="_Preview resolution">
+                    <MenuItem Header="_1/1" IsChecked="True"/>
+                    <MenuItem Header="_1/2"/>
+                    <MenuItem Header="_1/4"/>
+                </MenuItem>
             </MenuItem>
         </Menu>
         <Border Margin="0,27,5,25" Width="275" HorizontalAlignment="Right" BorderBrush="Gray" BorderThickness="1">

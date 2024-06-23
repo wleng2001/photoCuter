@@ -51,9 +51,17 @@ namespace photoCuter
 
         bool timeOfOperationsDebug = false;
 
+        public byte thread = 4;
+        byte previewResolution = 1;
+
+        MenuItem[] threadingOptions;
+
         public MainWindow()
         {
             InitializeComponent();
+            threadingOptions = new MenuItem[]{
+                MT1,MT2,MT4,MT6,MT8, MT16
+            };
         }
 
         void restartParameters()
@@ -124,7 +132,7 @@ namespace photoCuter
                 Value = cont,
             });
 
-            return tools.Contrast.setContrast(bitmap, cont);
+            return tools.Contrast.setContrast(bitmap, cont, thread);
 
         }
 
@@ -166,7 +174,7 @@ namespace photoCuter
             Bitmap image;
             if (bright != 0)
             {
-                image = tools.Brightness.SetBrightness(bitmap, bright, 10);
+                image = tools.Brightness.SetBrightness(bitmap, bright, 10, thread);
             }
             else
             {
@@ -359,7 +367,7 @@ namespace photoCuter
 
                     foreach (var o in madeOperationsList[i])
                     {
-                        b = OperationOnImage.MakeOperation(b, o);
+                        b = OperationOnImage.MakeOperation(b, o, thread);
                     }
                     b.Save(path, ImageFormat.Png);
                 }
@@ -413,6 +421,55 @@ namespace photoCuter
             {
                 confirmSetContrast();
             }
+        }
+
+        void uncheckMultiThreading()
+        {
+            foreach(MenuItem m in threadingOptions)
+            {
+                m.IsChecked = false;
+            }
+        }
+
+        void checkMultiThreadOption(byte number)
+        {
+            uncheckMultiThreading();
+            threadingOptions[number].IsChecked = !threadingOptions[number].IsChecked;
+        }
+        private void MenuItem_Click_MT4(object sender, RoutedEventArgs e)
+        {
+            checkMultiThreadOption(2);
+            thread = 4;
+        }
+
+        private void MT8_Click(object sender, RoutedEventArgs e)
+        {
+            checkMultiThreadOption(4);
+            thread = 8;
+        }
+
+        private void MenuItem_Click_MT1(object sender, RoutedEventArgs e)
+        {
+            checkMultiThreadOption(0);
+            thread = 1;
+        }
+
+        private void MenuItem_Click_MT2(object sender, RoutedEventArgs e)
+        {
+            checkMultiThreadOption(1);
+            thread = 2;
+        }
+
+        private void MenuItem_Click_MT6(object sender, RoutedEventArgs e)
+        {
+            checkMultiThreadOption(3);
+            thread = 6;
+        }
+
+        private void MenuItem_Click_MT16(object sender, RoutedEventArgs e)
+        {
+            checkMultiThreadOption(5);
+            thread = 16;
         }
     }
 }

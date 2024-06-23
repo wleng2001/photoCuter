@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -48,55 +49,27 @@ namespace tools
             }
             return (byte)c;
         }
-        static public Bitmap SetBrightness(Bitmap image, float bright,int multiplier)
+        static public Bitmap SetBrightness(Bitmap image, float bright,int multiplier, int threads)
         {
             Bitmap newImage = new Bitmap(image.Width, image.Height);
             int m = (int)(multiplier * bright);
 
-            void updatePixel0()
+            Thread[] threadTab = new Thread[threads];
+            for (int i = 0; i < threads; i++)
             {
-                updatePixel(image, newImage, m, 4, 0);
+                int localI = i;
+                void updatePixelX()
+                {
+                    updatePixel(image, newImage, m, threads, localI);
+                }
+                threadTab[i] = new Thread(updatePixelX);
+                threadTab[i].Start();
             }
 
-            void updatePixel1()
+            foreach (Thread t in threadTab)
             {
-                updatePixel(image, newImage, m, 4, 1);
+                t.Join();
             }
-
-            void updatePixel2()
-            {
-                updatePixel(image, newImage, m, 4, 2);
-            }
-
-            void updatePixel3()
-            {
-                updatePixel(image, newImage, m, 4, 3);
-            }
-            
-            Thread t0 = new Thread(updatePixel0);
-            t0.Name = "t0";
-            
-            Thread t1 = new Thread(updatePixel1);
-            t1.Name = "t1";
-            
-            Thread t2 = new Thread(updatePixel2);
-            t2.Name = "t2";
-            
-            Thread t3 = new Thread(updatePixel3);
-            t3.Name = "t3";
-            
-            t0.Start();
-            t1.Start();
-            t2.Start();
-            t3.Start();
-
-            
-            t0.Join();
-            t1.Join();
-            t2.Join();
-            t3.Join();
-
-            //updatePixel(image, newImage, m, 1, 0);
 
             return newImage;
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using photoCuter;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -36,17 +37,17 @@ namespace tools
         static public String Brightness { get; } = "Brightness";
         static public String Contrast { get; } = "Contrast";
 
-        static public Bitmap MakeOperation(Bitmap image, OperationOnImage operation)
+        static public Bitmap MakeOperation(Bitmap image, OperationOnImage operation, byte threads)
         {
             Bitmap newImage = image;
 
             switch (operation.OperationType)
             {
                 case "Brightness":
-                    newImage = tools.Brightness.SetBrightness(image, (float)operation.Value, 10);
+                    newImage = tools.Brightness.SetBrightness(image, (float)operation.Value, 10, threads);
                     break;
                 case "Contrast":
-                    newImage = tools.Contrast.setContrast(image, (float)operation.Value);
+                    newImage = tools.Contrast.setContrast(image, (float)operation.Value, threads);
                     break;
                 case "CutImage":
                     newImage = photoCuter.CutRectangle.CutImage(image, operation.X, operation.Y, operation.Width, operation.Height);
