@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -7,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -39,6 +41,11 @@ namespace photoCuter
         MadeOperationsList madeOperationsList;
 
         Stopwatch sw1 = new Stopwatch();
+
+        double stopWatchTimeInSec(Stopwatch sw)
+        {
+            return (double)sw1.ElapsedTicks / (double)Stopwatch.Frequency;
+        }
 
         Bitmap tempBitmap;
 
@@ -125,15 +132,23 @@ namespace photoCuter
         {
             if (openedImageObject != null)
             {
+                sw1.Restart();
+                sw1.Start();
                 Bitmap bitmap = setBrightness((float)brightnessSlider.Value, openedImageObject.OpenedBitmap);
+                sw1.Stop();
+                double time = stopWatchTimeInSec(sw1);
                 sw1.Restart();
                 sw1.Start();
                 bitmap = setContrast((float)contrastSlider.Value, bitmap);
                 sw1.Stop();
                 if (timeOfOperationsDebug)
-                    MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString() + "s", "Contrast");
+                    MessageBox.Show(stopWatchTimeInSec(sw1).ToString(), "Contrast");
+                statusBarLabel.Content = "Contrast: " + stopWatchTimeInSec(sw1)+"s";
+                sw1.Start();
                 tempBitmap = bitmap;
                 photoCanvas.Background = OpenedImageObject.convertToBrush(OpenedImageObject.convertToBitmapImage(bitmap));
+                sw1.Stop();
+                statusBarLabel.Content += "\t total: "+stopWatchTimeInSec(sw1)+time+"s";
             }
         }
         private void settingConstrastTextBox_ClickEnter(object sender, KeyEventArgs e)
@@ -174,15 +189,21 @@ namespace photoCuter
         {
             if (openedImageObject != null)
             {
+                sw1.Restart();
+                sw1.Start();
                 Bitmap bitmap = setContrast((float)contrastSlider.Value, openedImageObject.OpenedBitmap);
+                sw1.Stop();
+                double time = sw1.ElapsedMilliseconds / 1000;
                 sw1.Restart();
                 sw1.Start();
                 bitmap = setBrightness((float)brightnessSlider.Value, bitmap);
                 sw1.Stop();
                 if (timeOfOperationsDebug)
-                    MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString() + "s", "Brightness");
+                    MessageBox.Show(stopWatchTimeInSec(sw1).ToString() + "s", "Brightness");
+                statusBarLabel.Content = "Brightness: " + stopWatchTimeInSec(sw1) + "s";
                 tempBitmap = bitmap;
                 photoCanvas.Background = OpenedImageObject.convertToBrush(OpenedImageObject.convertToBitmapImage(bitmap));
+                statusBarLabel.Content += "\ttotal: " + stopWatchTimeInSec(sw1)+time + "s";
             }
         }
         private void settinBrightnessTextBox_ClickEnter(object sender, KeyEventArgs e)
@@ -223,6 +244,7 @@ namespace photoCuter
 
                 madeOperationsList.ClearOperations();
                 statusBarLabel.Content = "Opened: " + files[0];
+                restartParameters();
             }
         }
 
@@ -298,6 +320,7 @@ namespace photoCuter
                     sw1.Stop();
                     if (timeOfOperationsDebug)
                         MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString() + "s", "Cut");
+                    statusBarLabel.Content = "Cut Photo: " + stopWatchTimeInSec(sw1) + "s";
 
                     tempBitmap = bitmap;
 
@@ -315,8 +338,32 @@ namespace photoCuter
 
         }
 
-        private void MenuItem_Click_1(object sender, RoutedEventArgs e)
+        private void MenuItem_Click_1(object sender, RoutedEventArgs en)
         {
+            void updateStatusBar(string text)
+            {
+                statusBarLabel.Content = text;
+                statusBarProgressBar.Value++;
+            }
+
+            void saveFiles(Microsoft.Win32.SaveFileDialog dialog)
+            {
+                for (int i = 0; i < files.Length; i++)
+                {
+                    Bitmap b = new Bitmap(files[i]);
+                    String[] fileSplit = files[i].Split('\\');
+                    String fileName = fileSplit[fileSplit.Length - 1];
+                    String path = dialog.FileName + "\\" + fileName;
+                    
+                    Application.Current.Dispatcher.Invoke( () => updateStatusBar("Saved: " + path));
+
+                    foreach (var o in madeOperationsList[i])
+                    {
+                        b = OperationOnImage.MakeOperation(b, o);
+                    }
+                    b.Save(path, ImageFormat.Png);
+                }
+            }
             if (files != null)
             {
                 var dialog = new Microsoft.Win32.SaveFileDialog();
@@ -326,20 +373,13 @@ namespace photoCuter
                 bool? result = dialog.ShowDialog();
                 Directory.CreateDirectory(dialog.FileName);
                 
-                for(int i = 0; i< files.Length; i++)
-                {
-                    Bitmap b = new Bitmap(files[i]);
-                    String[] fileSplit = files[i].Split('\\');
-                    String fileName = fileSplit[fileSplit.Length - 1];
-                    String path = dialog.FileName + "\\" + fileName;
-                    statusBarLabel.Content = "Saved: " + path;
-
-                    foreach (var o in madeOperationsList[i])
-                    {
-                        b = OperationOnImage.MakeOperation(b, o);
-                    }
-                    b.Save(path, ImageFormat.Png);
-                }
+                statusBarProgressBar.Visibility = Visibility.Visible;
+                statusBarProgressBar.Minimum = 0;
+                statusBarProgressBar.Maximum = files.Length-1;
+                                              
+                saveFiles(dialog);
+                               
+                statusBarProgressBar.Visibility = Visibility.Hidden;
             }
             
         }
