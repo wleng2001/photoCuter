@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:photoCuter"
         mc:Ignorable="d"
-        Title="photoCuter" Height="579" Width="914" ResizeMode="CanResize" WindowStartupLocation="CenterScreen" WindowState="Maximized" SizeChanged="Main_SizeChanged"
+        Title="photoCuter" Height="571" Width="914" ResizeMode="CanResize" WindowStartupLocation="CenterScreen" WindowState="Maximized" SizeChanged="Main_SizeChanged"
         MinWidth="460" MinHeight="400"
         >
-    <Grid>
+    <Grid Margin="0,0,0,0">
         <Menu DockPanel.Dock ="Top" Height="22" VerticalAlignment="Top">
             <MenuItem Header="_Files">
                 <MenuItem Header="_Save" Click="MenuItem_Click_1"></MenuItem>
@@ -18,7 +18,7 @@
                 <MenuItem Name="timeOfOperationsMenuItem" Header="_Time of Operation" Click="MenuItem_Click_2"/>
             </MenuItem>
         </Menu>
-        <Border Margin="0,27,5,5" Width="275" HorizontalAlignment="Right" BorderBrush="Gray" BorderThickness="1">
+        <Border Margin="0,27,5,25" Width="275" HorizontalAlignment="Right" BorderBrush="Gray" BorderThickness="1">
             <StackPanel x:Name="optionsStacPanel" Margin="0" Orientation="Vertical" HorizontalAlignment="Stretch" >
                 <Label Name="brightntessLabel" Content="Brightntess" HorizontalAlignment="Left" FontSize="14"/>
                 <Slider Name="brightnessSlider" Minimum="-10" Maximum="10" Value="0" ValueChanged="brightnessSlider_ValueChanged" KeyDown="brightnessSlider_KeyDown"/>
@@ -38,7 +38,7 @@
                         <GridView>
                             <GridViewColumn Header="operation" DisplayMemberBinding="{Binding operation}" Width="110"/>
                             <GridViewColumn Header="value" DisplayMemberBinding="{Binding value}" Width="150"/>
-                        </GridView> 
+                        </GridView>
                     </ListView.View>
                 </ListView>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
@@ -67,13 +67,18 @@
 
             </StackPanel>
         </Border>
-        <Border Margin="5,27,290,5" BorderBrush="Gray" BorderThickness="1">
-            <Canvas x:Name="photoCanvas" Margin="0" Height="Auto" Width="Auto">
+        <Border Margin="5,27,290,25" BorderBrush="Gray" BorderThickness="1">
+            <Canvas x:Name="photoCanvas" Height="Auto" Width="Auto" Margin="0,0,0,0">
                 <Rectangle Name="cutRectangle" Visibility="Hidden" Stroke="Black" StrokeThickness="1" MouseLeftButtonDown="cutRectangle_MouseLeftButtonDown"/>
                 <Thumb Name="cutRectangleThumbLeft" Visibility="Hidden" Width="8" Height="8" DragDelta="cutRectangleThumbLeft_DragDelta" DragStarted="cutRectangleThumbLeft_DragStarted" DragCompleted="cutRectangleThumbLeft_DragCompleted" Background="Gray"/>
                 <Thumb Name="cutRectangleThumbRight" Visibility="Hidden" Width="8" Height="8" DragDelta="cutRectangleThumbRight_DragDelta" DragStarted="cutRectangleThumbRight_DragStarted" DragCompleted="cutRectangleThumbRight_DragCompleted" Background="Gray"/>
             </Canvas>
         </Border>
+        <Grid Name="statusBar" Background="#A9A9A9" Height="20" VerticalAlignment="Bottom" >
+            <Label Name="statusBarLabel" Content="Ready" FontSize="8" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0"/>
+            <ProgressBar Name="statusBarProgressBar" HorizontalAlignment="Right" Height="10" Margin="0,0,5,0" VerticalAlignment="Center" Width="100" Visibility="Hidden"/>
+        </Grid>
 
     </Grid>
+
 </Window>

@@ -222,6 +222,7 @@ namespace photoCuter
                 tempBitmap = openedImageObject.OpenedBitmap;
 
                 madeOperationsList.ClearOperations();
+                statusBarLabel.Content = "Opened: " + files[0];
             }
         }
 
@@ -331,6 +332,7 @@ namespace photoCuter
                     String[] fileSplit = files[i].Split('\\');
                     String fileName = fileSplit[fileSplit.Length - 1];
                     String path = dialog.FileName + "\\" + fileName;
+                    statusBarLabel.Content = "Saved: " + path;
 
                     foreach (var o in madeOperationsList[i])
                     {

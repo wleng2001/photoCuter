@@ -110,7 +110,7 @@ namespace tools
                     try
                     {
                         Monitor.Enter(monitorClass);
-                        newBitmap.SetPixel(j, i, Color.FromArgb(r, g, b));
+                        newBitmap.SetPixel(j, i, Color.FromArgb(pxl.A, r, g, b));
                     }
                     finally
                     {
