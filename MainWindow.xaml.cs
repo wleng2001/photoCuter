@@ -259,6 +259,8 @@ namespace photoCuter
             bool? result = dialogForm.ShowDialog();
             if(result == true)
             {
+                sw1.Restart();
+                sw1.Start();
                 files = dialogForm.FileNames;
                 openedFile = files[0];
                 madeOperationsList = new MadeOperationsList(quantityOfOperationOnImage, operationsList, tempOpearationsList, files.Length);
@@ -268,6 +270,8 @@ namespace photoCuter
                 madeOperationsList.ClearOperations();
                 statusBarLabel.Content = "Opened: " + files[0];
                 restartParameters();
+                sw1.Stop();
+                statusBarLabel.Content += "\tOpening time: " + stopWatchTimeInSec(sw1) + "s";
             }
         }
 
@@ -389,6 +393,8 @@ namespace photoCuter
             }
             if (files != null)
             {
+                sw1.Restart();
+                sw1.Start();
                 var dialog = new Microsoft.Win32.SaveFileDialog();
                 dialog.FileName = "Folder"; // Default file name
 
@@ -403,6 +409,8 @@ namespace photoCuter
                 saveFiles(dialog);
                                
                 statusBarProgressBar.Visibility = Visibility.Hidden;
+                sw1.Stop();
+                statusBarLabel.Content += "\tSaving time: " + stopWatchTimeInSec(sw1) + "s";
             }
             
         }
