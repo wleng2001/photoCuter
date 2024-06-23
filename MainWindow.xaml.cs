@@ -53,7 +53,7 @@ namespace photoCuter
         bool timeOfOperationsDebug = false;
 
         public byte thread = 4;
-        byte previewResolution = 1;
+        byte previewResolution = 4;
 
         MenuItem[] threadingOptions;
 
@@ -507,8 +507,12 @@ namespace photoCuter
             uncheckPreviewResolutionOptions();
             PS1.IsChecked = true;
             previewResolution = 1;
-            if(openedFile != null)
-                loadPhoto(OpenedImageObject.changeResolution(tempBitmap, previewResolution));
+            if (openedFile != null)
+            {
+                loadPhoto(OpenedImageObject.changeResolution(new Bitmap(openedFile), previewResolution));
+                madeOperationsList.ClearOperations();
+                restartParameters();
+            }
         }
 
         private void PS2_Click(object sender, RoutedEventArgs e)
@@ -517,7 +521,11 @@ namespace photoCuter
             PS2.IsChecked = true;
             previewResolution = 2;
             if (openedFile != null)
-                loadPhoto(OpenedImageObject.changeResolution(tempBitmap, previewResolution));
+            {
+                loadPhoto(OpenedImageObject.changeResolution(new Bitmap(openedFile), previewResolution));
+                madeOperationsList.ClearOperations();
+                restartParameters();
+            }
         }
 
         private void PS4_Click(object sender, RoutedEventArgs e)
@@ -526,7 +534,11 @@ namespace photoCuter
             PS4.IsChecked = true;
             previewResolution = 4;
             if (openedFile != null)
-                loadPhoto(OpenedImageObject.changeResolution(tempBitmap, previewResolution));
+            {
+                loadPhoto(OpenedImageObject.changeResolution(new Bitmap(openedFile), previewResolution));
+                madeOperationsList.ClearOperations();
+                restartParameters();
+            }
         }
     }
 }
