@@ -45,7 +45,7 @@ namespace photoCuter
 
         double stopWatchTimeInSec(Stopwatch sw)
         {
-            return (double)sw1.ElapsedTicks / (double)Stopwatch.Frequency;
+            return Math.Round((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency, 3);
         }
 
         Bitmap tempBitmap;
@@ -164,7 +164,7 @@ namespace photoCuter
                 tempBitmap = bitmap;
                 photoCanvas.Background = OpenedImageObject.convertToBrush(OpenedImageObject.convertToBitmapImage(bitmap));
                 sw1.Stop();
-                statusBarLabel.Content += "\t total: "+stopWatchTimeInSec(sw1)+time+"s";
+                statusBarLabel.Content += "\t total: "+(stopWatchTimeInSec(sw1)+time).ToString()+"s";
             }
         }
         private void settingConstrastTextBox_ClickEnter(object sender, KeyEventArgs e)
@@ -219,7 +219,7 @@ namespace photoCuter
                 statusBarLabel.Content = "Brightness: " + stopWatchTimeInSec(sw1) + "s";
                 tempBitmap = bitmap;
                 photoCanvas.Background = OpenedImageObject.convertToBrush(OpenedImageObject.convertToBitmapImage(bitmap));
-                statusBarLabel.Content += "\ttotal: " + stopWatchTimeInSec(sw1)+time + "s";
+                statusBarLabel.Content += "\ttotal: " + (stopWatchTimeInSec(sw1)+time).ToString() + "s";
             }
         }
         private void settinBrightnessTextBox_ClickEnter(object sender, KeyEventArgs e)
