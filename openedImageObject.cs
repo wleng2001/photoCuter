@@ -141,5 +141,28 @@ namespace photoCuter
                 return bitmapImage;
             }
         }
+
+        static public Bitmap changeResolution(Bitmap bitmap, byte factor)
+        {
+            if(factor > 1)
+            {
+                int newWidth = bitmap.Width / factor + 1;
+                int newHeight = (int)Math.Round((double)((double)bitmap.Height / factor), 0);
+                Bitmap newBitmap = new Bitmap(newWidth, newHeight);
+                for (int i = 0; i < bitmap.Width; i += factor)
+                {
+                    for (int j = 0; j < bitmap.Height; j += factor)
+                    {
+                        if (j < bitmap.Height)
+                            newBitmap.SetPixel(i / factor, j / factor, bitmap.GetPixel(i, j));
+                    }
+                }
+                return newBitmap;
+            }
+            else
+            {
+                return bitmap;
+            }
+        }
     }
 }

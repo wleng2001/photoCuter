@@ -35,6 +35,7 @@ namespace photoCuter
     public partial class MainWindow : Window
     {
         string[] files;
+        string openedFile;
         OpenedImageObject openedImageObject;
         byte quantityOfOperationOnImage = 3;
         CutRectangle CutRectangleWithCorner;
@@ -56,11 +57,18 @@ namespace photoCuter
 
         MenuItem[] threadingOptions;
 
+        MenuItem[] previewResolutionOptions;
+
         public MainWindow()
         {
             InitializeComponent();
             threadingOptions = new MenuItem[]{
                 MT1,MT2,MT4,MT6,MT8, MT16
+            };
+
+            previewResolutionOptions = new MenuItem[]
+            {
+                PS1,PS2,PS4
             };
         }
 
@@ -230,6 +238,17 @@ namespace photoCuter
         }
 
         //Open click
+
+        void loadPhoto(Bitmap bitmap)
+        {
+            openedImageObject = new OpenedImageObject();
+            BitmapImage bI = OpenedImageObject.convertToBitmapImage(OpenedImageObject.changeResolution(bitmap, previewResolution));
+            ImageBrush iB = openedImageObject.putImage(bI, photoCanvas.ActualWidth, photoCanvas.ActualHeight);
+            photoCanvas.Background = iB;
+            CutRectangleWithCorner = new CutRectangle(openedImageObject, photoCanvas, cutRectangle, cutRectangleThumbLeft, cutRectangleThumbRight);
+            CutRectangleWithCorner.putRectangle();
+            tempBitmap = openedImageObject.OpenedBitmap;
+        }
         private async void MenuItem_Click(object sender, RoutedEventArgs e)
         {
             var dialogForm = new Microsoft.Win32.OpenFileDialog();
@@ -241,14 +260,10 @@ namespace photoCuter
             if(result == true)
             {
                 files = dialogForm.FileNames;
+                openedFile = files[0];
                 madeOperationsList = new MadeOperationsList(quantityOfOperationOnImage, operationsList, tempOpearationsList, files.Length);
 
-                openedImageObject = new OpenedImageObject();
-                ImageBrush iB = openedImageObject.putImage(new BitmapImage(new Uri(files[0])), photoCanvas.ActualWidth, photoCanvas.ActualHeight);
-                photoCanvas.Background = iB;
-                CutRectangleWithCorner = new CutRectangle(openedImageObject, photoCanvas, cutRectangle, cutRectangleThumbLeft, cutRectangleThumbRight);
-                CutRectangleWithCorner.putRectangle();
-                tempBitmap = openedImageObject.OpenedBitmap;
+                loadPhoto(new Bitmap(openedFile));
 
                 madeOperationsList.ClearOperations();
                 statusBarLabel.Content = "Opened: " + files[0];
@@ -315,16 +330,16 @@ namespace photoCuter
                 {
                     tools.OperationOnImage cutImage = new tools.OperationOnImage();
                     cutImage.OperationType = tools.OperationOnImage.CutImage;
-                    cutImage.X = CutRectangleWithCorner.XWithoutScale;
-                    cutImage.Y = CutRectangleWithCorner.YWithoutScale;
-                    cutImage.Width = CutRectangleWithCorner.WidthWithoutScale;
-                    cutImage.Height = CutRectangleWithCorner.HeightWithoutScale;
+                    cutImage.X = CutRectangleWithCorner.XWithoutScale*previewResolution;
+                    cutImage.Y = CutRectangleWithCorner.YWithoutScale*previewResolution;
+                    cutImage.Width = CutRectangleWithCorner.WidthWithoutScale * previewResolution;
+                    cutImage.Height = CutRectangleWithCorner.HeightWithoutScale * previewResolution;
                     madeOperationsList.AddTempOpearation(cutImage);
                     openedImageObject.updateImageSource(bitmap);
 
                     sw1.Restart();
                     sw1.Start();
-                    bitmap = CutRectangle.CutImage(bitmap, cutImage.X, cutImage.Y, cutImage.Width, cutImage.Height);
+                    bitmap = CutRectangle.CutImage(bitmap, cutImage.X/previewResolution, cutImage.Y, cutImage.Width, cutImage.Height);
                     sw1.Stop();
                     if (timeOfOperationsDebug)
                         MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString() + "s", "Cut");
@@ -470,6 +485,40 @@ namespace photoCuter
         {
             checkMultiThreadOption(5);
             thread = 16;
+        }
+
+        void uncheckPreviewResolutionOptions()
+        {
+            foreach(MenuItem m in previewResolutionOptions)
+            {
+                m.IsChecked = false;
+            }
+        }
+        private void PS1_Click(object sender, RoutedEventArgs e)
+        {
+            uncheckPreviewResolutionOptions();
+            PS1.IsChecked = true;
+            previewResolution = 1;
+            if(openedFile != null)
+                loadPhoto(OpenedImageObject.changeResolution(tempBitmap, previewResolution));
+        }
+
+        private void PS2_Click(object sender, RoutedEventArgs e)
+        {
+            uncheckPreviewResolutionOptions();
+            PS2.IsChecked = true;
+            previewResolution = 2;
+            if (openedFile != null)
+                loadPhoto(OpenedImageObject.changeResolution(tempBitmap, previewResolution));
+        }
+
+        private void PS4_Click(object sender, RoutedEventArgs e)
+        {
+            uncheckPreviewResolutionOptions();
+            PS4.IsChecked = true;
+            previewResolution = 4;
+            if (openedFile != null)
+                loadPhoto(OpenedImageObject.changeResolution(tempBitmap, previewResolution));
         }
     }
 }

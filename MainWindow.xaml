@@ -28,9 +28,9 @@
                     <MenuItem Name="MT16" Header="_16" Click="MenuItem_Click_MT16"/>
                 </MenuItem>
                 <MenuItem Header="_Preview resolution">
-                    <MenuItem Header="_1/1" IsChecked="True"/>
-                    <MenuItem Header="_1/2"/>
-                    <MenuItem Header="_1/4"/>
+                    <MenuItem Name="PS1" Header="_1/1" IsChecked="True" Click="PS1_Click"/>
+                    <MenuItem Name="PS2" Header="_1/2" Click="PS2_Click"/>
+                    <MenuItem Name="PS4" Header="_1/4" Click="PS4_Click"/>
                 </MenuItem>
             </MenuItem>
         </Menu>
