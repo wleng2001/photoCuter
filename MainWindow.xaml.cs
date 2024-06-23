@@ -339,7 +339,7 @@ namespace photoCuter
 
                     sw1.Restart();
                     sw1.Start();
-                    bitmap = CutRectangle.CutImage(bitmap, cutImage.X/previewResolution, cutImage.Y, cutImage.Width, cutImage.Height);
+                    bitmap = CutRectangle.CutImage(bitmap, cutImage.X/previewResolution, cutImage.Y / previewResolution, cutImage.Width / previewResolution, cutImage.Height / previewResolution);
                     sw1.Stop();
                     if (timeOfOperationsDebug)
                         MessageBox.Show(((double)sw1.ElapsedTicks / (double)Stopwatch.Frequency).ToString() + "s", "Cut");
